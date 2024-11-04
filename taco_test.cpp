@@ -50,18 +50,18 @@ void Calculate_Fan_RPM(){
     
     
 
-        // if ( !(TACHO.read() == 1) ) {
+        if ( !(TACHO.read() == 1) ) {
 
-        //     if (prevpulse == 0) {
-        //     pulse_count += 1;
-        //     }
+            if (prevpulse == 0) {
+            pulse_count += 1;
+            }
         
-        //  prevpulse = 1;
-        // }
+         prevpulse = 1;
+        }
 
-        // else {
-        //     prevpulse = 0;
-        // }
+        else {
+            prevpulse = 0;
+        }
 
         
 
