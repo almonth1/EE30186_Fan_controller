@@ -35,6 +35,41 @@ PwmOut FanPWM(PB_0);
 
 
 
+
+// Rotary encoder
+ 
+ bool currentB;
+ bool prevB = bSignal.read();
+ bool prevClk = aClock.read();
+ /*
+        bool currentClk = aClock.read();
+        
+        
+        // led = !PB.read();
+        // LedEX = !PB.read();
+        if(currentClk != prevClk)
+        {
+        currentB = bSignal.read();
+         if(currentB == currentClk)   
+         {
+            LedEX = true;
+            led = false;
+         }
+         else {
+            led = true;
+            LedEX = false;
+         }
+         prevB = currentB;
+         prevClk = currentClk;
+          wait_us(1000)
+         */
+        
+
+
+   
+
+
+
 int main(){
     
     #ifdef TACHO_DEBUG

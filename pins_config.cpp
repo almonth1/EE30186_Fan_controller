@@ -15,3 +15,9 @@ DigitalIn TACHO(PA_0);
 #endif
 
 ///////////////////////////////
+
+#ifdef ROTARY_INPUT
+    DigitalIn aClock(PA_1);
+    DigitalIn bSignal(PA_4);
+    DigitalOut led_ex(PC_0);
+#endif
