@@ -53,19 +53,27 @@ int main(){
     #endif
 
     FanPWM.period(0.001);
+<<<<<<< Updated upstream
     FanPWM.write(0);
+=======
+    FanPWM.write(0.001001);
+>>>>>>> Stashed changes
     
     while(true){ 
+        Calculate_Fan_RPM();
 
         #ifdef TIMER_DEBUG
             printf("Timer Value %d\n", timer_value);
         #endif
 
         #ifdef TACHO_DEBUG
-        printf("Pulses: %d\nfanrpm = %g\n", pulse_count, fanrpm);
+         
+            // printf("Pulses: %d\nfanrpm = %g\n", pulse_count, fanrpm);
+            
+       
         #endif
 
-        wait_us(1000000);
+        
 
         // switch (button_mode) {
         // case 1:
