@@ -19,7 +19,7 @@
 
 //*****************************
 #define TACHO_DEBUG
-extern DigitalIn TACO;
+extern DigitalIn TACHO;
 
 #ifdef TACHO_DEBUG
 extern InterruptIn Tacho_Test;
