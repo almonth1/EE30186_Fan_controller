@@ -53,11 +53,11 @@ int main(){
     #endif
 
     FanPWM.period(0.001);
-<<<<<<< Updated upstream
+
     FanPWM.write(0);
-=======
+
     FanPWM.write(0.001001);
->>>>>>> Stashed changes
+////Test
     
     while(true){ 
         Calculate_Fan_RPM();
