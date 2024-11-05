@@ -11,7 +11,6 @@
 
 #define pid_period 0.01
 
-
 // priority to interrupts?
 // parameters in callback?
 // rotary encoder input needs to be completed
@@ -57,7 +56,7 @@ int main(){
     FanPWM.write(0);
 
     FanPWM.write(0.001001);
-////Test
+
     
     while(true){ 
         Calculate_Fan_RPM();
