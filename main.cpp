@@ -11,6 +11,7 @@
 
 #define pid_period 0.01
 
+
 // priority to interrupts?
 // parameters in callback?
 // rotary encoder input needs to be completed
@@ -33,7 +34,6 @@ Ticker test;
 PwmOut FanPWM(PB_0);
 
 
-
 int main(){
     
     #ifdef TACHO_DEBUG
@@ -51,11 +51,9 @@ int main(){
         Init_Timer_Mode();
     #endif
 
-    FanPWM.period(0.001);
+    FanPWM.period(0.002);
 
-    FanPWM.write(0);
-
-    FanPWM.write(0.001001);
+    FanPWM.write(0.00111);
 
     
     while(true){ 
