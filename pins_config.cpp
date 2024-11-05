@@ -2,9 +2,10 @@
 #include "pins_config.h"
 
 /////////////////////////////////
-DigitalIn TACHO(PA_0);
+
 
 #ifdef TACHO_DEBUG
+    DigitalIn TACHO(PA_0);
     InterruptIn Tacho_Test(BUTTON1);
     DigitalOut led(LED1);
 #endif

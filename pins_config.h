@@ -2,12 +2,14 @@
 #define PINS_CONFIG
 #include "mbed.h"
 
+// File for Setting Hardware Pins and Debug states
 
+//*** PID
 //*****************************
 //#define PID_DEBUG
 //*****************************
 
-
+//*** TIMER
 //*****************************
 //#define TIMER_DEBUG
 #ifdef TIMER_DEBUG
@@ -18,7 +20,8 @@
 
 
 //*****************************
-#define TACHO_DEBUG
+
+//#define TACHO_DEBUG
 extern DigitalIn TACHO;
 
 #ifdef TACHO_DEBUG
@@ -28,7 +31,8 @@ extern DigitalOut led;
 //*****************************
 
 //*****************************
-//#define ROTARY_INPUT
+//*** ROTARY_INPUT
+#define ROTARY_INPUT
 
 #ifdef ROTARY_INPUT
     extern DigitalIn aClock;

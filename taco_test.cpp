@@ -1,22 +1,17 @@
 
 #include "taco_test.h"
-#include <chrono>
-
-
-
-
 
 
 Ticker tacho_tick;
 
+// global variables
 int pulse_count;
-
 std::chrono::seconds tacho_period = 5s;
 int prevpulse = 0;
 float fanrpm;
 bool shdprint = false;
 
-
+// calculates rpm value and sets flag to print result
 void CalculateRPM () {
     //fan rpm calculation returning a float from integers
     fanrpm = ((float)pulse_count / tacho_period.count()) * 30;
@@ -24,6 +19,7 @@ void CalculateRPM () {
     
 }
 
+// increments plulse count by 1
 void Increment(){
     #ifdef TACHO_DEBUG
     pulse_count += 1;
@@ -31,6 +27,8 @@ void Increment(){
     
 }
 
+
+// initiates tacho ticker interrupt that calls calcilate rpm every tacho_period
 void Init_Calculate_Fan_RPM(){
     #ifdef TACHO_DEBUG
         led.write(true);
@@ -42,24 +40,18 @@ void Init_Calculate_Fan_RPM(){
     #endif
 }
 
-
-
+// measures tacho for roation speed of fan and prints the results when data is available
 void Calculate_Fan_RPM(){
-    
+    #ifdef TACHO_DEBUG
         if ( !(TACHO.read() == 1) ) {
-
             if (prevpulse == 0) {
             pulse_count += 1;
-            }
-        
-         prevpulse = 1;
+            } 
+            prevpulse = 1;
         }
-
         else {
             prevpulse = 0;
         }
-        
-
         // debug prints speed every taco_perios
         if(shdprint == true){
             printf("Average RPM: %g\n", fanrpm);
@@ -67,6 +59,7 @@ void Calculate_Fan_RPM(){
             pulse_count = 0;
             shdprint = false;
         }
-       wait_us(5000);
-
+        // wait to ignore bouncing signals
+        wait_us(5000);
+    #endif
 }
