@@ -28,7 +28,7 @@ extern DigitalOut led;
 //*****************************
 
 //*****************************
-#define ROTARY_INPUT
+//#define ROTARY_INPUT
 
 #ifdef ROTARY_INPUT
     extern DigitalIn aClock;

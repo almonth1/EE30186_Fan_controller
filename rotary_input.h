@@ -6,7 +6,7 @@
 extern bool currentB;
 extern bool prevB;
 extern bool prevClk;
-extern bool currentClk
+extern bool currentClk;
 
 
 

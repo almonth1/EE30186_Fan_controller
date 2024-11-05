@@ -4,10 +4,7 @@
 
 
 
-#ifdef TACHO_DEBUG
-InterruptIn Tacho_Test(BUTTON1);
-DigitalOut led(LED1);
-#endif
+
 
 
 Ticker tacho_tick;
@@ -49,9 +46,6 @@ void Init_Calculate_Fan_RPM(){
 
 void Calculate_Fan_RPM(){
     
-    
-
-<<<<<<< Updated upstream
         if ( !(TACHO.read() == 1) ) {
 
             if (prevpulse == 0) {
@@ -64,21 +58,6 @@ void Calculate_Fan_RPM(){
         else {
             prevpulse = 0;
         }
-=======
-    if ( !(TACHO.read() == 1) ) {
-
-        if (prevpulse == 0) {
-        pulse_count += 1;
-        }
-    
-        prevpulse = 1;
-    }
-
-    else {
-        prevpulse = 0;
-    }
->>>>>>> Stashed changes
-
         
 
         // debug prints speed every taco_perios
@@ -88,6 +67,6 @@ void Calculate_Fan_RPM(){
             pulse_count = 0;
             shdprint = false;
         }
-       
+       wait_us(5000);
 
 }

@@ -1,4 +1,5 @@
 #include "mbed.h"
+#include "pins_config.h"
 
 /////////////////////////////////
 DigitalIn TACHO(PA_0);

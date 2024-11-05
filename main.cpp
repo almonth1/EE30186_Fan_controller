@@ -38,9 +38,9 @@ PwmOut FanPWM(PB_0);
 
 // Rotary encoder
  
- bool currentB;
- bool prevB = bSignal.read();
- bool prevClk = aClock.read();
+ //bool currentB;
+ //bool prevB = bSignal.read();
+ //bool prevClk = aClock.read();
  /*
         bool currentClk = aClock.read();
         
@@ -87,11 +87,9 @@ int main(){
         Init_Timer_Mode();
     #endif
 
-    FanPWM.period(0.001);
+    FanPWM.period(0.002);
 
-    FanPWM.write(0);
-
-    FanPWM.write(0.001001);
+    FanPWM.write(0.00111);
 
     
     while(true){ 
