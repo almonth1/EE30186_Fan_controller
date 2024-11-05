@@ -55,7 +55,7 @@ int main(){
 
     FanPWM.write(0.00111);
 
-    // new
+    
     while(true){ 
         Calculate_Fan_RPM();
 
