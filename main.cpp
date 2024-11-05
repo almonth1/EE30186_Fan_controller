@@ -23,8 +23,6 @@
 
 
 
-
-
 int8_t pid_output;
 
 int button_mode;
