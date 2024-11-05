@@ -41,11 +41,7 @@ void Init_Calculate_Fan_RPM(){
 
 // measures tacho for roation speed of fan and prints the results when data is available
 void Calculate_Fan_RPM(){
-<<<<<<< HEAD
     #ifdef TACHO_DEBUG
-=======
-    
->>>>>>> main/Toni
         if ( !(TACHO.read() == 1) ) {
             if (prevpulse == 0) {
             pulse_count += 1;
@@ -55,11 +51,7 @@ void Calculate_Fan_RPM(){
         else {
             prevpulse = 0;
         }
-<<<<<<< HEAD
-=======
-        
 
->>>>>>> main/Toni
         // debug prints speed every taco_perios
         if(shdprint == true){
             printf("Average RPM: %g\n", fanrpm);
@@ -67,12 +59,7 @@ void Calculate_Fan_RPM(){
             pulse_count = 0;
             shdprint = false;
         }
-<<<<<<< HEAD
         // wait to ignore bouncing signals
         wait_us(5000);
     #endif
-=======
-       wait_us(5000);
-
->>>>>>> main/Toni
 }
