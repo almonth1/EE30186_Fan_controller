@@ -53,8 +53,7 @@ int main(){
         Init_Timer_Mode();
     #endif
 
-
-    #ifdef ROTARY_INPUT
+    #ifdef ROTARY_DEBUG
         Init_Rotary_Input();
     #endif
 

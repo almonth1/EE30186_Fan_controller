@@ -18,7 +18,7 @@
 
 ///////////////////////////////
 
-#ifdef ROTARY_INPUT
+#ifdef ROTARY_DEBUG
     DigitalIn aClock(PA_1);
     DigitalIn bSignal(PA_4);
     DigitalOut led_ex(PC_0);

@@ -11,7 +11,7 @@
 
 //*** TIMER
 //*****************************
-//#define TIMER_DEBUG
+#define TIMER_DEBUG
 #ifdef TIMER_DEBUG
     extern InterruptIn Timer_Test;
     extern DigitalOut led;
@@ -33,10 +33,10 @@ extern DigitalOut led;
 //*****************************
 
 //*** ROTARY_INPUT
-#define ROTARY_INPUT
+//#define ROTARY_DEBUG
 
 
-#ifdef ROTARY_INPUT
+#ifdef ROTARY_DEBUG
     extern DigitalIn aClock;
     extern DigitalIn bSignal;
     extern DigitalOut led_ex;

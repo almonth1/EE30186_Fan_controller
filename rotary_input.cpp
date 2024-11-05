@@ -1,9 +1,13 @@
 #include "rotary_input.h"
 
+bool currentB;
+bool prevB;
+bool prevClk;
+bool currentClk;
 
 //initiate rotary  values
 void Init_Rotary_Input(){  
-    #ifdef ROTARY_INPUT
+    #ifdef ROTARY_DEBUG
         bool currentB;
         bool prevB = bSignal.read();
         bool prevClk = aClock.read();
@@ -13,7 +17,7 @@ void Init_Rotary_Input(){
 
 // measures rotation direction of rotary encoder        
 void Rotary_Input(){
-    #ifdef ROTARY_INPUT
+    #ifdef ROTARY_DEBUG
         if(currentClk != prevClk)
         {
         currentB = bSignal.read();
@@ -28,3 +32,4 @@ void Rotary_Input(){
             wait_us(1000);
         }
     #endif
+}
