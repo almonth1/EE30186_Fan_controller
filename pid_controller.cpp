@@ -2,21 +2,25 @@
 #include "pid_controller.h"
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 
 
 Ticker pid_tick;
 
-// // PID period in ms
-// void Init_PID_Interrupt(float pid_period){
-//      pid_tick.attach(&PID_Control, pid_period);
-// }
+// sets PID period using a ticker interruptin (period in ms)
+void Init_PID_Interrupt(float pid_period){
+    pid_tick.attach(&PID_Dummy, pid_period);
+}
 
-
-
+// Initializes PID Speed controller parameters 
 void Init_Speed_PID_Controller(){
     PID speed_controller_params = {.error = 0, .Kp = 0, .Ki = 0, .Kd = 0, .i_error = 0, .d_error = 0, .prev_error = 0};   
 }
 
+void PID_Dummy(){
+    printf("PID running! :)");
+    wait_us(1000000);
+};
 void PID_Control( PID pid_params, int target_value, int8_t current_value, int8_t time_step ){
 
     pid_params.error = target_value - current_value;
@@ -27,7 +31,7 @@ void PID_Control( PID pid_params, int target_value, int8_t current_value, int8_t
 
     pid_params.prev_error = pid_output;
 
-
+    // caps the duty cycle between 1 and 0
     if (pid_output > 1) {
     pid_output = 1;
     }
