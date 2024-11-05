@@ -3,6 +3,9 @@
 
 #include "mbed.h"
 #include "pins_config.h"
+#include <chrono>
+
+// Declaring header variables
 
 extern Ticker tacho_tick;
 
@@ -12,6 +15,7 @@ extern int prevpulse;
 extern float fanrpm ;
 extern bool shdprint;
 
+// Declares header functions
 void Init_Calculate_Fan_RPM();
 void Calculate_Fan_RPM();
 
