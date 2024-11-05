@@ -25,23 +25,15 @@
 // FanPWM.period(0.002);
 // FanPWM.write(0.00111);
 
-<<<<<<< HEAD
+
 //global variables
-=======
-
-
-
->>>>>>> main/Toni
 int8_t pid_output;
 int button_mode;
 
 
 PwmOut FanPWM(PB_0);
 
-<<<<<<< HEAD
-=======
 
->>>>>>> main/Toni
 int main(){
     // Runs Tacho mode when TACHO_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef TACHO_DEBUG
