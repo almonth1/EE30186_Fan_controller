@@ -1,5 +1,6 @@
 #include "rotary_input.h"
 
+
 //initiate rotary  values
 void Init_Rotary_Input(){  
     #ifdef ROTARY_INPUT
@@ -27,4 +28,3 @@ void Rotary_Input(){
             wait_us(1000);
         }
     #endif
-}

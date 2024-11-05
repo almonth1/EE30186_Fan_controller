@@ -9,8 +9,10 @@ extern bool prevB;
 extern bool prevClk;
 extern bool currentClk;
 
+
 // Declares header functions
 void Init_Rotary_Input();
 void Rotary_Input();
+
 
 #endif
