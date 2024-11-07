@@ -5,8 +5,6 @@ Ticker tacho_tick;
 Timer tacho_timer;  
 // global variables
 int pulse_count;
-std::chrono::milliseconds tacho_delay = 13ms;
-std::chrono::seconds tacho_period = 5s;
 int prevpulse = 0;
 float fanrpm;
 bool shdprint = false;

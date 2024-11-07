@@ -6,7 +6,6 @@
 
 
 Timer pid_timer;
-std::chrono::milliseconds pid_period = 100ms;
 float pid_output = 0;
 PID speed_controller_params = {.error = 0, .Kp = 0, .Ki = 0, .Kd = 0, .i_error = 0, .d_error = 0, .prev_error = 0};
 

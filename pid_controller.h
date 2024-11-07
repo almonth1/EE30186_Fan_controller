@@ -7,7 +7,7 @@
 
 extern float pid_output;
 extern Timer pid_timer;
-extern std::chrono::milliseconds pid_period;
+
 
 // structure "PID" of PID Parameters
 typedef struct{

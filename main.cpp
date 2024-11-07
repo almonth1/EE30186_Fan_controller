@@ -14,7 +14,6 @@
 
 //** Tasks to think about
 // priority to interrupts?
-// parameters in callback?
 // rotary encoder input needs to be completed
 // LCD Display
 // hold to activate timer
@@ -43,8 +42,6 @@ int main() {
     // Runs PID mode when PID_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef PID_DEBUG
         // PID
-       
-        
     #endif
 
     // Runs Timer mode when TIMER_DEBUG is defined in "pins_config.h" (only define one at a time)
