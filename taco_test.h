@@ -8,6 +8,7 @@
 // Declaring header variables
 
 extern Ticker tacho_tick;
+extern std::chrono::milliseconds tacho_delay;
 
 extern int pulse_count;
 extern std::chrono::seconds tacho_period;

@@ -11,7 +11,7 @@
 
 //*** TIMER
 //*****************************
-#define TIMER_DEBUG
+//#define TIMER_DEBUG
 #ifdef TIMER_DEBUG
     extern InterruptIn Timer_Test;
     extern DigitalOut led;
@@ -21,11 +21,10 @@
 
 //*****************************
 
-//#define TACHO_DEBUG
+#define TACHO_DEBUG
 extern DigitalIn TACHO;
 
 #ifdef TACHO_DEBUG
-extern InterruptIn Tacho_Test;
 extern DigitalOut led;
 #endif
 //*****************************

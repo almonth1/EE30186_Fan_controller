@@ -1,7 +1,7 @@
 #include "ButtonInput.h"
 
 // Define the button input and a timer for tracking debounce
-static InterruptIn button(BUTTON1);  
+InterruptIn button(BUTTON1);  
 static Timer debounceTimer;          // Tracks time since last button press
 static bool buttonPressedFlag = false; // Records if button was pressed since last check
 

@@ -2,9 +2,10 @@
 #include "taco_test.h"
 
 Ticker tacho_tick;
-
+Timer tacho_timer;  
 // global variables
 int pulse_count;
+std::chrono::milliseconds tacho_delay = 13ms;
 std::chrono::seconds tacho_period = 5s;
 int prevpulse = 0;
 float fanrpm;
@@ -32,8 +33,7 @@ void Init_Calculate_Fan_RPM(){
     #ifdef TACHO_DEBUG
         led.write(true);
         tacho_tick.attach(&CalculateRPM, tacho_period);
-        Tacho_Test.mode(PullUp);
-        Tacho_Test.fall(&Increment);
+        tacho_timer.start();
         pulse_count = 0 ;
         fanrpm = 0.0;
     #endif
@@ -42,14 +42,21 @@ void Init_Calculate_Fan_RPM(){
 // measures tacho for roation speed of fan and prints the results when data is available
 void Calculate_Fan_RPM(){
     #ifdef TACHO_DEBUG
-        if ( !(TACHO.read() == 1) ) {
-            if (prevpulse == 0) {
-            pulse_count += 1;
+        if ( !(TACHO.read() == 0) ) {
+            if (prevpulse == 1) {
+
+                if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                    tacho_timer.elapsed_time()) > tacho_delay) {
+                    pulse_count += 1;
+                    tacho_timer.reset();
+                }
+            
+                
             } 
-            prevpulse = 1;
+            prevpulse = 0;
         }
         else {
-            prevpulse = 0;
+            prevpulse = 1;
         }
 
         // debug prints speed every taco_perios
