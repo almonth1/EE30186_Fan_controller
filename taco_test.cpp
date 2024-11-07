@@ -42,16 +42,14 @@ void Init_Calculate_Fan_RPM(){
 // measures tacho for roation speed of fan and prints the results when data is available
 void Calculate_Fan_RPM(){
     #ifdef TACHO_DEBUG
-        if ( !(TACHO.read() == 0) ) {
+        if ( TACHO.read() == 0)  {
             if (prevpulse == 1) {
 
                 if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                     tacho_timer.elapsed_time()) > tacho_delay) {
                     pulse_count += 1;
-                    tacho_timer.reset();
                 }
-            
-                
+                tacho_timer.reset();
             } 
             prevpulse = 0;
         }
@@ -66,7 +64,6 @@ void Calculate_Fan_RPM(){
             pulse_count = 0;
             shdprint = false;
         }
-        // wait to ignore bouncing signals
-        wait_us(5000);
+        
     #endif
 }
