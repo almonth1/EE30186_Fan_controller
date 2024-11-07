@@ -30,6 +30,8 @@ int Button_Mode = 1;
 PwmOut FanPWM(PB_0);
 
 int main() {
+
+    InitializeButtonInput();
     // Runs Tacho mode when TACHO_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef TACHO_DEBUG
         // Tacho
