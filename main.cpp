@@ -79,6 +79,14 @@ int main() {
                     // Mode 1: Fan RPM calculation (e.g., TACHO mode)
                     #ifdef TACHO_DEBUG
                         Calculate_Fan_RPM();
+                        Rotary_Input();  // Update encoder position
+
+                    int rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
+                    if (rotaryPosition > 99) {
+                        rotaryPosition = 99;  // Cap at maximum
+                    }
+
+                    float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
                     #endif
                     break;
 
@@ -87,12 +95,28 @@ int main() {
                     #ifdef PID_DEBUG
                         // Call relevant PID control function
                         Calculate_Fan_RPM();
+                        Rotary_Input();  // Update encoder position
+
+                    int rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
+                    if (rotaryPosition > 99) {
+                        rotaryPosition = 99;  // Cap at maximum
+                    }
+
+                    float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
                     #endif
                     break;
 
                 case 3:
                     // Mode 3: Timer display (e.g., TIMER mode)
                     #ifdef TIMER_DEBUG
+                        Rotary_Input();  // Update encoder position
+
+                        int rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
+                        if (rotaryPosition > 99) {
+                            rotaryPosition = 99;  // Cap at maximum
+                        }
+
+                        float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
                         printf("Timer Value: %d\n", timer_value); // Replace `timer_value` with actual variable
                     #endif
                     break;

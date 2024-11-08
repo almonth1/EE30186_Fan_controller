@@ -13,6 +13,6 @@ extern bool currentClk;
 // Declares header functions
 void Init_Rotary_Input();
 void Rotary_Input();
-
+int RotaryInput_GetPosition();
 
 #endif
