@@ -18,6 +18,7 @@
 // LCD Display
 // hold to activate timer
 // Digital Filtering of tachometer at low speeds (ignore pulse if occurs within 2ms of each other)
+// Timer display on 7 seg
 
 //**** ideal pwm parameters for low speed
 // FanPWM.period(0.002);
@@ -85,7 +86,7 @@ int main() {
                     break;
 
                 case 2:
-                    // Mode 2: PID control (e.g., temperature control mode)
+                    // Mode 2: PID Temperature Limiting  
                     #ifdef PID_DEBUG
                         // Call relevant PID control function
                         Calculate_Fan_RPM();
