@@ -23,6 +23,7 @@ void Rotary_Input(){
         currentB = bSignal.read();
             if(currentB == currentClk){
                 led_ex = true;
+                
             }
             else {
                 led_ex = false;

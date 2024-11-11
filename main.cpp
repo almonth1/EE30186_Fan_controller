@@ -8,23 +8,24 @@
 #include <chrono>
 #include <cstdio>
 
-#define pid_period 10ms
+#define TargetSpeed 1500
+
+
 
 //** Tasks to think about
 // priority to interrupts?
-// parameters in callback?
 // rotary encoder input needs to be completed
 // LCD Display
-// button modes
 // hold to activate timer
 // Digital Filtering of tachometer at low speeds (ignore pulse if occurs within 2ms of each other)
+// Timer display on 7 seg
 
 //**** ideal pwm parameters for low speed
 // FanPWM.period(0.002);
 // FanPWM.write(0.00111);
 
 //global variables
-int8_t pid_output;
+
 int Button_Mode = 1;
 
 PwmOut FanPWM(PB_0);
@@ -36,12 +37,12 @@ int main() {
     #ifdef TACHO_DEBUG
         // Tacho
         Init_Calculate_Fan_RPM();
+        Init_Speed_PID_Controller();
     #endif
 
     // Runs PID mode when PID_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef PID_DEBUG
         // PID
-        Init_PID_Interrupt(pid_period);
     #endif
 
     // Runs Timer mode when TIMER_DEBUG is defined in "pins_config.h" (only define one at a time)
@@ -76,14 +77,16 @@ int main() {
 
             switch (Button_Mode) {
                 case 1:
-                    // Mode 1: Fan RPM calculation (e.g., TACHO mode)
+                    // Mode 1: PID Speed Control
                     #ifdef TACHO_DEBUG
                         Calculate_Fan_RPM();
+                        PID_Control(speed_controller_params, TargetSpeed, fanrpm);
+                        FanPWM.write(pid_output);
                     #endif
                     break;
 
                 case 2:
-                    // Mode 2: PID control (e.g., temperature control mode)
+                    // Mode 2: PID Temperature Limiting  
                     #ifdef PID_DEBUG
                         // Call relevant PID control function
                         Calculate_Fan_RPM();
