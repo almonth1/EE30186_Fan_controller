@@ -37,8 +37,8 @@ extern std::chrono::milliseconds pid_period;
 //*****************************
 //#define TIMER_DEBUG
 #ifdef TIMER_DEBUG
-    extern InterruptIn Timer_Test;
-    extern DigitalOut led;
+    // extern InterruptIn Timer_Test;
+    // extern DigitalOut led;
 #endif
 //*****************************
 

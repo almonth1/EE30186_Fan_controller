@@ -13,11 +13,8 @@
 
 
 //** Tasks to think about
-// priority to interrupts?
-// rotary encoder input needs to be completed
 // LCD Display
 // hold to activate timer
-// Digital Filtering of tachometer at low speeds (ignore pulse if occurs within 2ms of each other)
 // Timer display on 7 seg
 
 //**** ideal pwm parameters for low speed
@@ -32,6 +29,8 @@ float rotaryP;
 float duty_cycle;
 Timer printTimer; 
 PwmOut FanPWM(PB_0);
+bool start_timer = true;
+int set_timer = 10;
 
 int main() {
     printTimer.start();
@@ -70,7 +69,7 @@ int main() {
         // Check if the button was pressed to change the mode
         if (WasButtonPressed()) {
             Button_Mode++;     
-            if (Button_Mode > 3) {
+            if (Button_Mode > 4) {
                 Button_Mode = 0;  // Wrap around to mode 1 after mode 3
             }
 
@@ -117,27 +116,38 @@ int main() {
                         Rotary_Input();  // Update encoder position
 
                      target_value = RotaryInput_GetPosition();  // Get the current encoder position
-                    if (target_value > 99) {
-                        target_value = 99;  // Cap at maximum
-                    }
-
-                    rotaryP = target_value / 100.0f;  // Convert to a percentage
+                    // PID_Control(pid_temp_ptr, target_value, current_temp);
                     #endif
                     break;
 
                 case 3:
                     // Mode 3: Timer display (e.g., TIMER mode)
-                    #ifdef TIMER_DEBUG
                         Rotary_Input();  // Update encoder position
-
-                        rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
-                        if (rotaryPosition > 99) {
-                            rotaryPosition = 99;  // Cap at maximum
-                        }
-
-                        rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
-                        printf("Timer Value: %d\n", timer_value); // Replace `timer_value` with actual variable
-                    #endif
+                        start_timer = true;
+                        target_value = RotaryInput_GetPosition();  // Get the current encoder position
+                   
+                    break;
+                
+                case 4:
+                    if (start_timer == true) {
+                        Start_Timer(target_value);
+                        start_timer = false;
+                    }
+                    if (timer_value == 0) {
+                        duty_cycle = 0.3;
+                        FanPWM.write(duty_cycle);
+                    }
+                    else{
+                        duty_cycle = 1.0;
+                        FanPWM.write(duty_cycle);
+                    }
+                    if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 1000ms) {
+                            printf("timer_value =%d\n",timer_value);
+                            printf("PWM duty %g\n", duty_cycle);
+                            //printf("rotary position: %d\n", target_value);
+                            printTimer.reset();
+                            }
                     break;
 
                 default:
