@@ -10,26 +10,30 @@ extern Timer pid_timer;
 
 
 // structure "PID" of PID Parameters
-typedef struct{
+struct PID{
     int16_t error;
 
     float Kp;
     float Ki;
     float Kd;
 
-
-    int16_t i_error;
+    int i_error;
     int16_t d_error;
 
     int16_t prev_error;
-} PID;
+};
+
 
 extern PID speed_controller_params;
+extern PID temp_controller_params;
+
+extern PID* pid_speed_ptr;
+extern PID* pid_temp_ptr;
 
 // Declares header functions
-void Init_Speed_PID_Controller();
+void Init_PID_Controller(PID *pid_params, PID param_init);
 void PID_Dummy();
-void PID_Control(PID pid_params, uint16_t target_value, uint16_t current_value);
+void PID_Control(PID *pid_params, uint16_t target_value, uint16_t current_value);
 
 
 #endif
