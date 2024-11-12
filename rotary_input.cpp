@@ -1,36 +1,40 @@
 #include "rotary_input.h"
+#include "mbed.h"
 
-bool currentB;
-bool prevB;
-bool prevClk;
-bool currentClk;
+// Global variable to track the encoder position
+static int encoderPosition = 0;  // Initialize to zero or your desired starting value
 
-//initiate rotary  values
-void Init_Rotary_Input(){  
+// Function to initialize the rotary encoder
+void Init_Rotary_Input() {
     #ifdef ROTARY_DEBUG
-        bool currentB;
-        bool prevB = bSignal.read();
-        bool prevClk = aClock.read();
-        bool currentClk = aClock.read();
-    #endif    
+        prevB = bSignal.read();
+        prevClk = aClock.read();
+        currentClk = aClock.read();
+    #endif
 }
 
-// measures rotation direction of rotary encoder        
-void Rotary_Input(){
+// Function to process the encoder input and update the position
+void Rotary_Input() {
     #ifdef ROTARY_DEBUG
-        if(currentClk != prevClk)
-        {
-        currentB = bSignal.read();
-            if(currentB == currentClk){
-                led_ex = true;
-                
+
+        currentClk = aClock.read();
+        if (currentClk != prevClk) {
+            currentB = bSignal.read();
+
+            if (currentB == currentClk) {
+                encoderPosition++;  // Increment for clockwise rotation
+            } else {
+                encoderPosition--;  // Decrement for counter-clockwise rotation
             }
-            else {
-                led_ex = false;
-            }
+
             prevB = currentB;
             prevClk = currentClk;
-            wait_us(1000);
+            wait_us(10000);  // Basic debouncing delay
         }
     #endif
+}
+
+// Function to get the current encoder position
+int RotaryInput_GetPosition() {
+    return encoderPosition;
 }
