@@ -2,34 +2,95 @@
 #include "mbed.h"
 
 // Global variable to track the encoder position
-static int encoderPosition = 0;  // Initialize to zero or your desired starting value
+int encoderPosition = 0;  // Initialize to zero or your desired starting value
+int increment = 1;
+int max_value = 100;
+int min_value = 0;
+bool currentB;
+bool prevB;
+bool prevClk;
+bool currentClk;
 
 // Function to initialize the rotary encoder
-void Init_Rotary_Input() {
+void Init_Rotary_Input(int button_mode) {
     #ifdef ROTARY_DEBUG
         prevB = bSignal.read();
         prevClk = aClock.read();
         currentClk = aClock.read();
+
+        switch (button_mode){
+            case 0:
+                // Mode 0: Open Loop Speed Control
+                increment = 5;
+                max_value = 100;
+                min_value = 0;
+                encoderPosition = min_value;
+                break;
+
+            case 1:
+                // Mode 1: PID Speed Control
+                increment = 100;
+                max_value = 2000;
+                min_value = 1000;
+                encoderPosition = min_value;
+                break;
+
+            case 2:
+                // Mode 2: PID Temperature Limiting  
+                increment = 1;
+                max_value = 40;
+                min_value = 20;
+                encoderPosition = min_value;
+                break;
+            case 3:
+                // Mode 3: Timer display (e.g., TIMER mode)
+                increment = 1;
+                max_value = 99;
+                min_value = 0;
+                encoderPosition = min_value;
+                break;
+
+            default:
+                // Mode 0: Open Loop Speed Control
+                increment = 5;
+                max_value = 100;
+                min_value = 0;
+                encoderPosition = min_value;
+                break;
+        }
     #endif
 }
 
 // Function to process the encoder input and update the position
 void Rotary_Input() {
     #ifdef ROTARY_DEBUG
-
         currentClk = aClock.read();
         if (currentClk != prevClk) {
             currentB = bSignal.read();
-
+        
             if (currentB == currentClk) {
-                encoderPosition++;  // Increment for clockwise rotation
+                // Decrement for counter-clockwise rotation
+                encoderPosition -= increment; 
+                led_A.write(false);
+                led_B.write(true);
+                
             } else {
-                encoderPosition--;  // Decrement for counter-clockwise rotation
+                // Increment for clockwise rotation
+                encoderPosition += increment; 
+                led_A.write(true);
+                led_B.write(false); 
             }
-
             prevB = currentB;
             prevClk = currentClk;
-            wait_us(10000);  // Basic debouncing delay
+
+            if (encoderPosition > max_value) {
+                    encoderPosition = max_value;  // Cap at maximum
+                }
+            else if (encoderPosition < min_value) {
+                    encoderPosition = min_value;  // Cap at maximum
+                }
+            printf("rotary position: %d\n", encoderPosition);
+            wait_us(1000);  // Basic debouncing delay
         }
     #endif
 }

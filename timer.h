@@ -9,8 +9,10 @@ extern Ticker timer_tick;
 extern bool init_timer;
 extern uint8_t timer_value;
 
+extern int set_timer;
+
 void Init_Timer_Mode();
-void Start_Timer();
+void Start_Timer(int set_timer);
 void Decrement_Timer();
 
 #endif
