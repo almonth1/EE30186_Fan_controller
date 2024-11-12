@@ -8,40 +8,43 @@
 #include <chrono>
 #include <cstdio>
 
-#define pid_period 10ms
+#define TargetSpeed 1500
+
+
 
 //** Tasks to think about
 // priority to interrupts?
-// parameters in callback?
 // rotary encoder input needs to be completed
 // LCD Display
-// button modes
 // hold to activate timer
 // Digital Filtering of tachometer at low speeds (ignore pulse if occurs within 2ms of each other)
+// Timer display on 7 seg
 
 //**** ideal pwm parameters for low speed
 // FanPWM.period(0.002);
 // FanPWM.write(0.00111);
 
 //global variables
-int8_t pid_output;
+
 int Button_Mode = 1;
 
+Timer printTimer; 
 PwmOut FanPWM(PB_0);
 
 int main() {
+    printTimer.start();
 
     InitializeButtonInput();
     // Runs Tacho mode when TACHO_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef TACHO_DEBUG
         // Tacho
         Init_Calculate_Fan_RPM();
+        Init_PID_Controller(pid_speed_ptr, speed_controller_params);
     #endif
 
     // Runs PID mode when PID_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef PID_DEBUG
         // PID
-        Init_PID_Interrupt(pid_period);
     #endif
 
     // Runs Timer mode when TIMER_DEBUG is defined in "pins_config.h" (only define one at a time)
@@ -62,10 +65,6 @@ int main() {
             printf("Timer Value %d\n", timer_value);
         #endif
 
-        #ifdef TACHO_DEBUG
-            Calculate_Fan_RPM();   
-        #endif
-
         // Check if the button was pressed to change the mode
         if (WasButtonPressed()) {
             Button_Mode++;     
@@ -73,11 +72,12 @@ int main() {
                 Button_Mode = 1;  // Wrap around to mode 1 after mode 3
             }
             printf("Switched to mode %d\n", Button_Mode);
-
+        }
             switch (Button_Mode) {
                 case 1:
-                    // Mode 1: Fan RPM calculation (e.g., TACHO mode)
+                    // Mode 1: PID Speed Control
                     #ifdef TACHO_DEBUG
+                        
                         Calculate_Fan_RPM();
                         Rotary_Input();  // Update encoder position
 
@@ -87,12 +87,23 @@ int main() {
                     }
 
                     float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
+
+                        PID_Control(pid_speed_ptr, TargetSpeed, fanrpm);
+                        FanPWM.write(pid_output);
+
+                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 3000ms) {
+                            printf("Average RPM: %g\n", fanrpm);
+                            printf("PWM duty %g\n", pid_output);
+                            printTimer.reset();
+                             }
+
                     #endif
                     break;
 
                 case 2:
-                    // Mode 2: PID control (e.g., temperature control mode)
-                    #ifdef PID_DEBUG
+                    // Mode 2: PID Temperature Limiting  
+                    #ifdef TACHO_DEBUG
                         // Call relevant PID control function
                         Calculate_Fan_RPM();
                         Rotary_Input();  // Update encoder position
@@ -125,6 +136,6 @@ int main() {
                     Button_Mode = 1;
                     break;
             }
-        }
     }
 }
+

@@ -1,21 +1,20 @@
 
 #include "taco_test.h"
+#include <cstdio>
 
 Ticker tacho_tick;
 Timer tacho_timer;  
 // global variables
 int pulse_count;
-std::chrono::milliseconds tacho_delay = 13ms;
-std::chrono::seconds tacho_period = 5s;
 int prevpulse = 0;
 float fanrpm;
-bool shdprint = false;
+int shdprint = 0;
 
 // calculates rpm value and sets flag to print result
 void CalculateRPM () {
     //fan rpm calculation returning a float from integers
-    fanrpm = ((float)pulse_count / tacho_period.count()) * 30;
-    shdprint = true;
+    fanrpm = ((float)pulse_count / (tacho_period.count()/1000.0)) * 30;
+    pulse_count = 0;
     
 }
 
@@ -24,7 +23,6 @@ void Increment(){
     #ifdef TACHO_DEBUG
     pulse_count += 1;
     #endif  
-    
 }
 
 
@@ -42,16 +40,14 @@ void Init_Calculate_Fan_RPM(){
 // measures tacho for roation speed of fan and prints the results when data is available
 void Calculate_Fan_RPM(){
     #ifdef TACHO_DEBUG
-        if ( !(TACHO.read() == 0) ) {
+        if ( TACHO.read() == 0)  {
             if (prevpulse == 1) {
 
                 if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                    tacho_timer.elapsed_time()) > tacho_delay) {
+                    tacho_timer.elapsed_time()) >= tacho_delay) {
                     pulse_count += 1;
-                    tacho_timer.reset();
                 }
-            
-                
+                tacho_timer.reset();
             } 
             prevpulse = 0;
         }
@@ -59,14 +55,15 @@ void Calculate_Fan_RPM(){
             prevpulse = 1;
         }
 
-        // debug prints speed every taco_perios
-        if(shdprint == true){
-            printf("Average RPM: %g\n", fanrpm);
-            printf(" Pulses = %d\n", pulse_count);
-            pulse_count = 0;
-            shdprint = false;
-        }
-        // wait to ignore bouncing signals
-        wait_us(5000);
+        
+        // // debug prints speed every taco_perios
+        // if(shdprint == 6){
+        //     printf("Average RPM: %g\n", fanrpm);
+        //     // printf(" Pulses = %d\n", pulse_count);
+        //     // printf(" period = %f\n", (tacho_period.count()/1000.0));
+        //     // pulse_count = 0;
+        //     shdprint = 0;
+        // }
+        
     #endif
 }

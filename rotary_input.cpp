@@ -16,6 +16,7 @@ void Init_Rotary_Input() {
 // Function to process the encoder input and update the position
 void Rotary_Input() {
     #ifdef ROTARY_DEBUG
+
         currentClk = aClock.read();
         if (currentClk != prevClk) {
             currentB = bSignal.read();
