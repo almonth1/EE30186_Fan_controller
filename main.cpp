@@ -16,6 +16,8 @@
 // LCD Display
 // hold to activate timer
 // Timer display on 7 seg
+// Temperature readings
+// low speed pi controller
 
 //**** ideal pwm parameters for low speed
 // FanPWM.period(0.002);
