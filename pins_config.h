@@ -18,11 +18,12 @@ extern DigitalOut led;
 
 //*** ROTARY_INPUT
 //*****************************
-//#define ROTARY_DEBUG
+#define ROTARY_DEBUG
 #ifdef ROTARY_DEBUG
     extern DigitalIn aClock;
     extern DigitalIn bSignal;
-    extern DigitalOut led_ex;
+    extern DigitalOut led_A;
+    extern DigitalOut led_B;
 #endif
 //*****************************
 

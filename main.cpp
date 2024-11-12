@@ -26,8 +26,10 @@
 
 //global variables
 
-int Button_Mode = 1;
-
+int Button_Mode = 0;
+int target_value;
+float rotaryP;
+float duty_cycle;
 Timer printTimer; 
 PwmOut FanPWM(PB_0);
 
@@ -54,7 +56,7 @@ int main() {
     #endif
 
     #ifdef ROTARY_DEBUG
-        Init_Rotary_Input();
+        Init_Rotary_Input(Button_Mode);
     #endif
 
     FanPWM.period(0.002);
@@ -69,35 +71,41 @@ int main() {
         if (WasButtonPressed()) {
             Button_Mode++;     
             if (Button_Mode > 3) {
-                Button_Mode = 1;  // Wrap around to mode 1 after mode 3
+                Button_Mode = 0;  // Wrap around to mode 1 after mode 3
             }
+
+            #ifdef ROTARY_DEBUG
+                Init_Rotary_Input(Button_Mode);
+            #endif
+
             printf("Switched to mode %d\n", Button_Mode);
         }
             switch (Button_Mode) {
+                case 0:
+                    Rotary_Input();  // Update encoder position
+                    target_value = RotaryInput_GetPosition();  // Get the current encoder position
+                    duty_cycle = target_value/100.0;
+                    FanPWM.write(duty_cycle);
+
                 case 1:
                     // Mode 1: PID Speed Control
                     #ifdef TACHO_DEBUG
                         
                         Calculate_Fan_RPM();
+                        
                         Rotary_Input();  // Update encoder position
+                        target_value = RotaryInput_GetPosition();  // Get the current encoder position
 
-                    int rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
-                    if (rotaryPosition > 99) {
-                        rotaryPosition = 99;  // Cap at maximum
-                    }
-
-                    float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
-
-                        PID_Control(pid_speed_ptr, TargetSpeed, fanrpm);
+                        PID_Control(pid_speed_ptr, target_value, fanrpm);
                         FanPWM.write(pid_output);
 
                         if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                             printTimer.elapsed_time()) >= 3000ms) {
                             printf("Average RPM: %g\n", fanrpm);
-                            printf("PWM duty %g\n", pid_output);
+                            //printf("PWM duty %g\n", pid_output);
+                            //printf("rotary position: %d\n", target_value);
                             printTimer.reset();
                              }
-
                     #endif
                     break;
 
@@ -108,12 +116,12 @@ int main() {
                         Calculate_Fan_RPM();
                         Rotary_Input();  // Update encoder position
 
-                    int rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
-                    if (rotaryPosition > 99) {
-                        rotaryPosition = 99;  // Cap at maximum
+                     target_value = RotaryInput_GetPosition();  // Get the current encoder position
+                    if (target_value > 99) {
+                        target_value = 99;  // Cap at maximum
                     }
 
-                    float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
+                    rotaryP = target_value / 100.0f;  // Convert to a percentage
                     #endif
                     break;
 
@@ -122,12 +130,12 @@ int main() {
                     #ifdef TIMER_DEBUG
                         Rotary_Input();  // Update encoder position
 
-                        int rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
+                        rotaryPosition = RotaryInput_GetPosition();  // Get the current encoder position
                         if (rotaryPosition > 99) {
                             rotaryPosition = 99;  // Cap at maximum
                         }
 
-                        float rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
+                        rotaryP = rotaryPosition / 100.0f;  // Convert to a percentage
                         printf("Timer Value: %d\n", timer_value); // Replace `timer_value` with actual variable
                     #endif
                     break;
