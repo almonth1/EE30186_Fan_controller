@@ -9,7 +9,7 @@
 #define TACHO_DEBUG
 extern DigitalIn TACHO;
 extern std::chrono::milliseconds tacho_delay;
-extern std::chrono::seconds tacho_period;
+extern std::chrono::milliseconds tacho_period;
 
 #ifdef TACHO_DEBUG
 extern DigitalOut led;

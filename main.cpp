@@ -28,16 +28,18 @@
 
 int Button_Mode = 1;
 
+Timer printTimer; 
 PwmOut FanPWM(PB_0);
 
 int main() {
+    printTimer.start();
 
     InitializeButtonInput();
     // Runs Tacho mode when TACHO_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef TACHO_DEBUG
         // Tacho
         Init_Calculate_Fan_RPM();
-        Init_Speed_PID_Controller();
+        Init_PID_Controller(pid_speed_ptr, speed_controller_params);
     #endif
 
     // Runs PID mode when PID_DEBUG is defined in "pins_config.h" (only define one at a time)
@@ -63,10 +65,6 @@ int main() {
             printf("Timer Value %d\n", timer_value);
         #endif
 
-        #ifdef TACHO_DEBUG
-            Calculate_Fan_RPM();   
-        #endif
-
         // Check if the button was pressed to change the mode
         if (WasButtonPressed()) {
             Button_Mode++;     
@@ -74,20 +72,28 @@ int main() {
                 Button_Mode = 1;  // Wrap around to mode 1 after mode 3
             }
             printf("Switched to mode %d\n", Button_Mode);
-
+        }
             switch (Button_Mode) {
                 case 1:
                     // Mode 1: PID Speed Control
                     #ifdef TACHO_DEBUG
+                        
                         Calculate_Fan_RPM();
-                        PID_Control(speed_controller_params, TargetSpeed, fanrpm);
+                        PID_Control(pid_speed_ptr, TargetSpeed, fanrpm);
                         FanPWM.write(pid_output);
+
+                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 3000ms) {
+                            printf("Average RPM: %g\n", fanrpm);
+                            printf("PWM duty %g\n", pid_output);
+                            printTimer.reset();
+                             }
                     #endif
                     break;
 
                 case 2:
                     // Mode 2: PID Temperature Limiting  
-                    #ifdef PID_DEBUG
+                    #ifdef TACHO_DEBUG
                         // Call relevant PID control function
                         Calculate_Fan_RPM();
                     #endif
@@ -104,6 +110,6 @@ int main() {
                     Button_Mode = 1;
                     break;
             }
-        }
     }
 }
+
