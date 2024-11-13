@@ -30,7 +30,7 @@ extern DigitalOut led;
 //*** PID
 //*****************************
 //#define PID_DEBUG
-extern std::chrono::milliseconds pid_period;
+extern std::chrono::microseconds pid_period;
 //*****************************
 
 //*** TIMER

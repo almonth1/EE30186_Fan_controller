@@ -61,9 +61,11 @@ int main() {
     #endif
 
     FanPWM.period(0.002);
-    FanPWM.write(0.00111);
+    //FanPWM.write(0.00111);
+   
     
     while (true) {   
+         //FanPWM.write(1);
         #ifdef TIMER_DEBUG
             printf("Timer Value %d\n", timer_value);
         #endif
@@ -83,10 +85,19 @@ int main() {
         }
             switch (Button_Mode) {
                 case 0:
+                    Calculate_Fan_RPM();
                     Rotary_Input();  // Update encoder position
                     target_value = RotaryInput_GetPosition();  // Get the current encoder position
                     duty_cycle = target_value/100.0;
                     FanPWM.write(duty_cycle);
+                    if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 3000ms) {
+                            printf("Average RPM: %g\n", fanrpm);
+                            //printf("PWM duty %g\n", pid_output);
+                            //printf("rotary position: %d\n", target_value);
+                            printTimer.reset();
+                             }
+                    break;
 
                 case 1:
                     // Mode 1: PID Speed Control
@@ -153,7 +164,7 @@ int main() {
                     break;
 
                 default:
-                    Button_Mode = 1;
+                    Button_Mode = 0;
                     break;
             }
     }
