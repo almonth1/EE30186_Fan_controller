@@ -35,3 +35,9 @@ std::chrono::microseconds pid_period = 1000us;
     // extern DigitalOut led(LED1);
 #endif
 //*****************************
+
+
+//*** Temp
+//*****************************
+I2C i2c(PB_9,PB_8);
+//*****************************

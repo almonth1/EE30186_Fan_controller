@@ -12,7 +12,7 @@ PID speed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.00000001, .Kd =
 // PID values is good for low speed, not high speed
 PID* pid_speed_ptr = &speed_controller_params;
 
-PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000002, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000, .Kd = 0, .d_error = 0, .prev_error = 0};
 PID* pid_temp_ptr = &temp_controller_params;
 
 // Initializes PID Speed controller parameters 

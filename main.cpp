@@ -5,6 +5,7 @@
 #include "pins_config.h"
 #include "rotary_input.h"
 #include "ButtonInput.h"
+#include "temp_sensor.h"
 #include <chrono>
 #include <cstdio>
 
@@ -27,6 +28,9 @@
 
 int Button_Mode = 0;
 int target_value;
+int current_temp;
+int target_temp;
+
 float rotaryP;
 float duty_cycle;
 Timer printTimer; 
@@ -76,10 +80,31 @@ int main() {
             if (Button_Mode > 4) {
                 Button_Mode = 0;  // Wrap around to mode 1 after mode 3
             }
+            switch (Button_Mode){
+            case 0:
+                // Mode 0: Open Loop Speed Control
+                break;
+            case 1:
+                // Mode 1: PID Speed Control
+                Init_PID_Controller(pid_speed_ptr, speed_controller_params);
+                break;
+            case 2:
+                // Mode 2: PID Temperature Limiting  
+                Init_PID_Controller(pid_temp_ptr, temp_controller_params);
+                break;
+            case 3:
+                // Mode 3: Timer display (e.g., TIMER mode)
+                break;
 
+            default:
+                // Mode 0: Open Loop Speed Control
+                
+                break;
+        }
             #ifdef ROTARY_DEBUG
                 Init_Rotary_Input(Button_Mode);
             #endif
+            
 
             printf("Switched to mode %d\n", Button_Mode);
         }
@@ -122,15 +147,20 @@ int main() {
                     break;
 
                 case 2:
-                    // Mode 2: PID Temperature Limiting  
-                    #ifdef TACHO_DEBUG
-                        // Call relevant PID control function
-                        Calculate_Fan_RPM();
-                        Rotary_Input();  // Update encoder position
+                    // Mode 2: PID Temperature Limiting
+                    // Read Temperature
+                    Rotary_Input();  // Update encoder position
+                    current_temp = Read_Temperature();
+                    target_temp = RotaryInput_GetPosition();
 
-                     target_value = RotaryInput_GetPosition();  // Get the current encoder position
-                    // PID_Control(pid_temp_ptr, target_value, current_temp);
-                    #endif
+                    // PID Controller takes temp_pid parameters, current temperature, and input value
+                    // if (current_temp > target_temp) {
+                    // PID_Control(pid_temp_ptr, current_temp , target_temp);
+                    // }
+                    PID_Control(pid_temp_ptr, current_temp , target_temp);
+                
+                    
+                    FanPWM.write(pid_output);
                     break;
 
                 case 3:
