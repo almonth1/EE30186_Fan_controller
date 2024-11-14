@@ -18,19 +18,20 @@ std::chrono::milliseconds tacho_period = 300ms;
 #ifdef ROTARY_DEBUG
     DigitalIn aClock(PA_1);
     DigitalIn bSignal(PA_4);
-    DigitalOut led_ex(PC_0);
+    DigitalOut led_A(PB_7);
+    DigitalOut led_B(PA_15);
 #endif
 //*****************************
 
 //****** PID
 //*****************************
-std::chrono::milliseconds pid_period = 1ms;
+std::chrono::microseconds pid_period = 1000us;
 //*****************************
 
 //*** TIMER
 //*****************************
 #ifdef TIMER_DEBUG
-    extern InterruptIn Timer_Test(BUTTON1);
-    extern DigitalOut led(LED1);
+    // extern InterruptIn Timer_Test(BUTTON1);
+    // extern DigitalOut led(LED1);
 #endif
 //*****************************

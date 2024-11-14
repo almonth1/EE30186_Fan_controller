@@ -8,7 +8,8 @@
 Timer pid_timer;
 float pid_output = 0;
 
-PID speed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000002, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID speed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.00000001, .Kd = 0, .d_error = 0, .prev_error = 0};
+// PID values is good for low speed, not high speed
 PID* pid_speed_ptr = &speed_controller_params;
 
 PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000002, .Kd = 0, .d_error = 0, .prev_error = 0};
@@ -28,7 +29,7 @@ void PID_Dummy(){
 
 void PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_value){
 
-     if ( std::chrono::duration_cast<std::chrono::milliseconds>(pid_timer.elapsed_time()) >= pid_period) {
+     if ( std::chrono::duration_cast<std::chrono::microseconds>(pid_timer.elapsed_time()) >= pid_period) {
         
         pid_params->error = target_value - current_value;
         pid_params->i_error += pid_params->error;
