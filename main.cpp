@@ -50,6 +50,9 @@ PwmOut FanPWM(PB_0);
 bool start_timer = true;
 int set_timer = 10;
 
+//LCD::LCD(PinName rs, PinName e, PinName d4, PinName d5, PinName d6, PinName d7): _rs(rs), _e(e), _d4(d4), _d5(d5), _d6(d6), _d7(d7), _row(0), _column(0)
+//LCD lcd(PB_15, PB_14, PB_10, PA_8, PA_2, PB_2, PB_1);
+
 int main() {
     printTimer.start();
 
