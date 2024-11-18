@@ -5,6 +5,7 @@
 #include "pins_config.h"
 #include "rotary_input.h"
 #include "ButtonInput.h"
+#include "temp_sensor.h"
 #include <chrono>
 #include <cstdio>
 
@@ -25,10 +26,25 @@
 
 //global variables
 
+//WORKING:  PID lowspeed_controller_params = {.error = 0, .Kp = 0.000007, .Ki = 0.00000008, .Kd = 0, .d_error = 0, .prev_error = 0};
+//WORKING:  FanPWM.period(0.00242); 
+//else if (pid_output <= 0.0004) {
+//            pid_output = 0.0004;
+//       } - speed 60rpm
+//next steps: rotary poistion: 0, LOW SPEED MODE, 100, 150...
+// pulse to kick in at LOW SPEED MODE, 100, 150(?)
+// with current PI config, big overshoot at 500-1000rpm 
+// high speed PID still to do
+
 int Button_Mode = 0;
 int target_value;
+int current_temp;
+int target_temp;
+float pwm_period;
+bool init_low_PID = true;
+bool init_high_PID = true;
+
 float rotaryP;
-float duty_cycle;
 Timer printTimer; 
 PwmOut FanPWM(PB_0);
 bool start_timer = true;
@@ -45,7 +61,7 @@ int main() {
     #ifdef TACHO_DEBUG
         // Tacho
         Init_Calculate_Fan_RPM();
-        Init_PID_Controller(pid_speed_ptr, speed_controller_params);
+        Init_PID_Controller(pid_lowspeed_ptr, lowspeed_controller_params);
     #endif
 
     // Runs PID mode when PID_DEBUG is defined in "pins_config.h" (only define one at a time)
@@ -63,8 +79,8 @@ int main() {
         Init_Rotary_Input(Button_Mode);
     #endif
 
-    FanPWM.period(0.002);
-    //FanPWM.write(0.00111);
+    FanPWM.period(0.00242);
+    FanPWM.write(0.00111);
    
     
     while (true) {   
@@ -79,10 +95,37 @@ int main() {
             if (Button_Mode > 4) {
                 Button_Mode = 0;  // Wrap around to mode 1 after mode 3
             }
+            switch (Button_Mode){
+            case 0:
+                // Mode 0: Open Loop Speed Control
+                break;
+            case 1:
+                // Mode 1: PID Speed Control
+                if (target_value >= 1000){
+                    Init_PID_Controller(pid_highspeed_ptr, highspeed_controller_params);
+                }
+                else{
+                    Init_PID_Controller(pid_lowspeed_ptr, lowspeed_controller_params);
+                }
+                printf("target value = %d\n", target_value);
+                break;
+            case 2:
+                // Mode 2: PID Temperature Limiting  
+                Init_PID_Controller(pid_temp_ptr, temp_controller_params);
+                break;
+            case 3:
+                // Mode 3: Timer display (e.g., TIMER mode)
+                break;
 
+            default:
+                // Mode 0: Open Loop Speed Control
+                
+                break;
+        }
             #ifdef ROTARY_DEBUG
                 Init_Rotary_Input(Button_Mode);
             #endif
+            
 
             printf("Switched to mode %d\n", Button_Mode);
         }
@@ -111,12 +154,36 @@ int main() {
                         Rotary_Input();  // Update encoder position
                         target_value = RotaryInput_GetPosition();  // Get the current encoder position
 
-                        PID_Control(pid_speed_ptr, target_value, fanrpm);
-                        FanPWM.write(pid_output);
+                        if (target_value >= 1000){
+                            init_low_PID = true;
+
+                            if(init_high_PID){
+                            Init_PID_Controller(pid_highspeed_ptr, highspeed_controller_params);
+                            init_high_PID = false;
+                            }
+
+                            duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm);
+                            //FanPWM.period(0.002);
+                            FanPWM.write(duty_cycle);
+                            
+                        }
+                        else{
+                            init_high_PID = true;
+                            if (init_low_PID) {
+                                Init_PID_Controller(pid_lowspeed_ptr, lowspeed_controller_params);
+                                init_low_PID = false;
+                            }
+
+                            duty_cycle = PID_Control(pid_lowspeed_ptr, target_value, fanrpm);
+                            FanPWM.write(duty_cycle);
+                           
+                        }
+                        
 
                         if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                             printTimer.elapsed_time()) >= 3000ms) {
                             printf("Average RPM: %g\n", fanrpm);
+                            printf("Average Duty: %g\n", duty_cycle);
                             //printf("PWM duty %g\n", pid_output);
                             //printf("rotary position: %d\n", target_value);
                             printTimer.reset();
@@ -125,15 +192,20 @@ int main() {
                     break;
 
                 case 2:
-                    // Mode 2: PID Temperature Limiting  
-                    #ifdef TACHO_DEBUG
-                        // Call relevant PID control function
-                        Calculate_Fan_RPM();
-                        Rotary_Input();  // Update encoder position
+                    // Mode 2: PID Temperature Limiting
+                    // Read Temperature
+                    Rotary_Input();  // Update encoder position
+                    current_temp = Read_Temperature();
+                    target_temp = RotaryInput_GetPosition();
 
-                     target_value = RotaryInput_GetPosition();  // Get the current encoder position
-                    // PID_Control(pid_temp_ptr, target_value, current_temp);
-                    #endif
+                    // PID Controller takes temp_pid parameters, current temperature, and input value
+                    // if (current_temp > target_temp) {
+                    // PID_Control(pid_temp_ptr, current_temp , target_temp);
+                    // }
+                    duty_cycle = PID_Control(pid_temp_ptr, current_temp , target_temp);
+                
+                    
+                    FanPWM.write(duty_cycle);
                     break;
 
                 case 3:

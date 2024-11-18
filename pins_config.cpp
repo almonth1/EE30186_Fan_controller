@@ -10,7 +10,7 @@
     DigitalOut led(LED1);
 #endif
 std::chrono::milliseconds tacho_delay = 13ms;
-std::chrono::milliseconds tacho_period = 300ms;
+std::chrono::milliseconds tacho_period = 1000ms;
 //*****************************
 
 //*** ROTARY_INPUT
@@ -34,4 +34,10 @@ std::chrono::microseconds pid_period = 1000us;
     // extern InterruptIn Timer_Test(BUTTON1);
     // extern DigitalOut led(LED1);
 #endif
+//*****************************
+
+
+//*** Temp
+//*****************************
+I2C i2c(PB_9,PB_8);
 //*****************************

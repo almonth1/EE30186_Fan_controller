@@ -7,12 +7,17 @@
 
 Timer pid_timer;
 float pid_output = 0;
+float duty_cycle;
 
-PID speed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.00000001, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID lowspeed_controller_params = {.error = 0, .Kp = 0.000007, .Ki = 0.00000008, .Kd = 0, .d_error = 0, .prev_error = 0};
 // PID values is good for low speed, not high speed
-PID* pid_speed_ptr = &speed_controller_params;
+PID* pid_lowspeed_ptr = &lowspeed_controller_params;
 
-PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000002, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID highspeed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.00000001, .Kd = 0, .d_error = 0, .prev_error = 0};
+// PID values is good for low speed, not high speed
+PID* pid_highspeed_ptr = &highspeed_controller_params;
+
+PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000, .Kd = 0, .d_error = 0, .prev_error = 0};
 PID* pid_temp_ptr = &temp_controller_params;
 
 // Initializes PID Speed controller parameters 
@@ -27,7 +32,7 @@ void PID_Dummy(){
     wait_us(1000000);
 };
 
-void PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_value){
+float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_value){
 
      if ( std::chrono::duration_cast<std::chrono::microseconds>(pid_timer.elapsed_time()) >= pid_period) {
         
@@ -44,8 +49,8 @@ void PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_value
         if (pid_output > 1) {
             pid_output = 1.0;
         }
-        else if (pid_output < 0) {
-            pid_output = 0.0;
+        else if (pid_output <= 0.0004) {
+            pid_output = 0.0004;
         }
         
         // printf(" error = %d\n", pid_params.error);
@@ -54,6 +59,7 @@ void PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_value
         // printf(" pid output = %f\n", pid_output);
         pid_timer.reset();
                     }
+    return pid_output;
 };
 
 

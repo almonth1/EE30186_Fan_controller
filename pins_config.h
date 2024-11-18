@@ -42,4 +42,9 @@ extern std::chrono::microseconds pid_period;
 #endif
 //*****************************
 
+
+//*** Temp
+//*****************************
+extern I2C i2c;
+//*****************************
 #endif

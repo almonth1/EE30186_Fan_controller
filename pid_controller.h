@@ -6,6 +6,7 @@
 #include "pins_config.h"
 
 extern float pid_output;
+extern float duty_cycle;
 extern Timer pid_timer;
 
 
@@ -24,16 +25,18 @@ struct PID{
 };
 
 
-extern PID speed_controller_params;
+extern PID highspeed_controller_params;
+extern PID lowspeed_controller_params;
 extern PID temp_controller_params;
 
-extern PID* pid_speed_ptr;
+extern PID* pid_highspeed_ptr;
+extern PID* pid_lowspeed_ptr;
 extern PID* pid_temp_ptr;
 
 // Declares header functions
 void Init_PID_Controller(PID *pid_params, PID param_init);
 void PID_Dummy();
-void PID_Control(PID *pid_params, uint16_t target_value, uint16_t current_value);
+float PID_Control(PID *pid_params, uint16_t target_value, uint16_t current_value);
 
 
 #endif
