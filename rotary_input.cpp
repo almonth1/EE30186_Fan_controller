@@ -1,5 +1,7 @@
 #include "rotary_input.h"
 #include "mbed.h"
+#include "taco_test.h"
+#include "pid_controller.h"
 
 // Global variable to track the encoder position
 int encoderPosition = 0;  // Initialize to zero or your desired starting value
@@ -24,15 +26,15 @@ void Init_Rotary_Input(int button_mode) {
                 increment = 5;
                 max_value = 100;
                 min_value = 0;
-                encoderPosition = min_value;
+                encoderPosition = duty_cycle;
                 break;
 
             case 1:
                 // Mode 1: PID Speed Control
-                increment = 100;
+                increment = 50;
                 max_value = 2000;
-                min_value = 1000;
-                encoderPosition = min_value;
+                min_value = 0;
+                encoderPosition = fanrpm;
                 break;
 
             case 2:

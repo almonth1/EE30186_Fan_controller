@@ -10,7 +10,7 @@
     DigitalOut led(LED1);
 #endif
 std::chrono::milliseconds tacho_delay = 13ms;
-std::chrono::milliseconds tacho_period = 300ms;
+std::chrono::milliseconds tacho_period = 1000ms;
 //*****************************
 
 //*** ROTARY_INPUT

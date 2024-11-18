@@ -11,5 +11,5 @@ i2c.read(77, data , 2);
 
 printf("Temp: %d\n" , data[0] );
 
-return data[0]
+return data[0];
 };
