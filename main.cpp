@@ -162,7 +162,7 @@ int main() {
                             init_high_PID = false;
                             }
 
-                            duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm);
+                            duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm, false);
                             //FanPWM.period(0.002);
                             FanPWM.write(duty_cycle);
                             
@@ -174,7 +174,7 @@ int main() {
                                 init_low_PID = false;
                             }
 
-                            duty_cycle = PID_Control(pid_lowspeed_ptr, target_value, fanrpm);
+                            duty_cycle = PID_Control(pid_lowspeed_ptr, target_value, fanrpm, true);
                             FanPWM.write(duty_cycle);
                            
                         }
@@ -202,7 +202,7 @@ int main() {
                     // if (current_temp > target_temp) {
                     // PID_Control(pid_temp_ptr, current_temp , target_temp);
                     // }
-                    duty_cycle = PID_Control(pid_temp_ptr, current_temp , target_temp);
+                    duty_cycle = PID_Control(pid_temp_ptr, current_temp , target_temp, false);
                 
                     
                     FanPWM.write(duty_cycle);
