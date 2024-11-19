@@ -1,3 +1,4 @@
+
 #include "mbed.h"
 #include "taco_test.h"
 #include "timer.h"
@@ -6,6 +7,7 @@
 #include "rotary_input.h"
 #include "ButtonInput.h"
 #include "temp_sensor.h"
+#include "LCD_text.h"
 #include <chrono>
 #include <cstdio>
 
@@ -49,12 +51,23 @@ Timer printTimer;
 PwmOut FanPWM(PB_0);
 bool start_timer = true;
 int set_timer = 10;
+int previousButtonMode = -1;
+
+TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
 
 //LCD::LCD(PinName rs, PinName e, PinName d4, PinName d5, PinName d6, PinName d7): _rs(rs), _e(e), _d4(d4), _d5(d5), _d6(d6), _d7(d7), _row(0), _column(0)
 //LCD lcd(PB_15, PB_14, PB_10, PA_8, PA_2, PB_2, PB_1);
 
 int main() {
     printTimer.start();
+
+    lcd.cls();            // Clear screen
+                    lcd.locate(-1, 0);     // Move cursor to (0,0)
+                    lcd.printf(" Hello"); 
+    
+   // lcd.cls();            // Clear screen
+   // lcd.locate(-1, 0);     // Move cursor to (0,0)
+    //lcd.printf(" Hello");  // Display "Hello" on the screen
 
     InitializeButtonInput();
     // Runs Tacho mode when TACHO_DEBUG is defined in "pins_config.h" (only define one at a time)
@@ -143,6 +156,14 @@ int main() {
                             //printf("rotary position: %d\n", target_value);
                             printTimer.reset();
                              }
+
+                    lcd.locate(0, 0);  // Move the cursor to the first row
+                    lcd.printf("RPM: %.1f   ", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+
+                    lcd.locate(0, 1);  // Move the cursor to the second row
+                    lcd.printf("Duty: %.2f  ", duty_cycle);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
+
+    
                     break;
 
                 case 1:
@@ -153,6 +174,12 @@ int main() {
                         
                         Rotary_Input();  // Update encoder position
                         target_value = RotaryInput_GetPosition();  // Get the current encoder position
+
+                        lcd.locate(0, 0);  // Move the cursor to the first row
+                        lcd.printf("RPM: %.1f   ", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+
+                        lcd.locate(0, 1);  // Move the cursor to the second row
+                        lcd.printf("Duty: %.2f  ", duty_cycle);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
 
                         if (target_value >= 1000){
                             init_low_PID = true;
@@ -206,6 +233,12 @@ int main() {
                 
                     
                     FanPWM.write(duty_cycle);
+
+                    lcd.locate(0, 0);  // Move the cursor to the first row
+                    lcd.printf("RPM: %.1f   ", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+
+                    lcd.locate(0, 1);  // Move the cursor to the second row
+                    lcd.printf("Duty: %.2f  ", duty_cycle);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
                     break;
 
                 case 3:
@@ -244,4 +277,5 @@ int main() {
             }
     }
 }
+
 

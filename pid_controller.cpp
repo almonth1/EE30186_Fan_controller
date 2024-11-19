@@ -52,7 +52,7 @@ float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_valu
         else if (pid_output <= 0.0004) {
             pid_output = 0.0004;
         }
-        if (pid_params->i_error < 0) {
+        if (pid_params->i_error < 0 && low_speed == true ) {
          pid_params->i_error = 0;
         }
         
@@ -61,6 +61,7 @@ float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_valu
         // printf(" current = %d\n", current_value);
         // printf(" pid output = %f\n", pid_output);
         pid_timer.reset();
+        
                     }
     return pid_output;
 };
