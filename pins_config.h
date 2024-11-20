@@ -10,6 +10,7 @@
 extern DigitalIn TACHO;
 extern std::chrono::milliseconds tacho_delay;
 extern std::chrono::milliseconds tacho_period;
+extern PwmOut FanPWM;
 
 #ifdef TACHO_DEBUG
 extern DigitalOut led;
@@ -47,4 +48,5 @@ extern std::chrono::microseconds pid_period;
 //*****************************
 extern I2C i2c;
 //*****************************
+
 #endif

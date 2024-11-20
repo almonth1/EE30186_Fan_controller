@@ -10,6 +10,7 @@
 
 extern Ticker tacho_tick;
 extern std::chrono::milliseconds tacho_delay;
+extern InterruptIn tacho_interrupt;
 
 extern int pulse_count;
 
@@ -20,5 +21,6 @@ extern int shdprint;
 // Declares header functions
 void Init_Calculate_Fan_RPM();
 void Calculate_Fan_RPM();
+void Tacho_Fall();
 
 #endif

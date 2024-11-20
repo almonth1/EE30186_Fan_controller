@@ -8,6 +8,7 @@
 #ifdef TACHO_DEBUG
     DigitalIn TACHO(PA_0);
     DigitalOut led(LED1);
+    PwmOut FanPWM(PB_0);
 #endif
 std::chrono::milliseconds tacho_delay = 13ms;
 std::chrono::milliseconds tacho_period = 1000ms;
