@@ -51,7 +51,9 @@ void Init_Rotary_Input(int button_mode) {
                 min_value = 0;
                 encoderPosition = min_value;
                 break;
-
+            case 4:
+                break;
+                
             default:
                 // Mode 0: Open Loop Speed Control
                 increment = 5;
@@ -91,8 +93,8 @@ void Rotary_Input() {
             else if (encoderPosition < min_value) {
                     encoderPosition = min_value;  // Cap at maximum
                 }
-            printf("rotary position: %d\n", encoderPosition);
-            wait_us(1000);  // Basic debouncing delay
+            //printf("rotary position: %d\n", encoderPosition);
+            //wait_us(1000);  // Basic debouncing delay
         }
     #endif
 }

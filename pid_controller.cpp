@@ -17,7 +17,7 @@ PID highspeed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.00000001, .
 // PID values is good for low speed, not high speed
 PID* pid_highspeed_ptr = &highspeed_controller_params;
 
-PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID temp_controller_params = {.error = 0, .Kp = 1, .Ki = 0.000, .Kd = 0, .d_error = 0, .prev_error = 0};
 PID* pid_temp_ptr = &temp_controller_params;
 
 // Initializes PID Speed controller parameters 
@@ -49,9 +49,12 @@ float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_valu
         if (pid_output > 1) {
             pid_output = 1.0;
         }
-        else if (pid_output <= 0.0004) {
-            pid_output = 0.0004;
+        else if (pid_output <= 0.0003 && target_value > 0) {
+            pid_output = 0.0003;
         }
+        else if (pid_output <= 0.0004 && target_value == 0){
+            pid_output = 0;
+        } 
         // if (pid_params->i_error < 0 && low_speed == true ) {
         //  pid_params->i_error = 0;
         // }
