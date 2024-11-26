@@ -47,6 +47,11 @@ int Button_Mode = 0;
 int target_value;
 int current_temp;
 int target_temp;
+float previous_fan_rpm = -1.0;
+int previous_duty_cycle = -1;
+int previous_target_rpm = -1;
+float previous_temp = -1.0;
+int previous_target_temp = -1;
 float pwm_period;
 bool init_low_PID = true;
 bool init_high_PID = true;
@@ -203,7 +208,7 @@ test.write(7);
                     }
 
                    
-                    if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                    /*if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                             printTimer.elapsed_time()) >= 1000ms) {
                             printf("Average RPM: %g\n", fanrpm);
                             //printf("PWM duty %g\n", pid_output);
@@ -215,7 +220,21 @@ test.write(7);
                             lcd.locate(0, 1);  // Move the cursor to the first row
                             lcd.printf("Duty Cycle: %.1f", duty_cycle);  //
                             printTimer.reset();
-                             }
+                             }*/
+
+                    if (fanrpm != previous_fan_rpm || target_value != previous_target_rpm) {
+                            lcd.cls();
+                            wait_us(10000);
+                            lcd.locate(0, 0);  // Move the cursor to the first row
+                            lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+
+                            lcd.locate(0, 1);  // Move the cursor to the second row
+                            lcd.printf("Duty Cycle: %.1f", duty_cycle);
+
+                            // Update the previous values
+                            previous_fan_rpm = fanrpm;
+                            previous_duty_cycle = duty_cycle; 
+                    }                
 
                     break;
 
@@ -254,7 +273,7 @@ test.write(7);
                         }
                         
                         
-                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                        /*if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                             printTimer.elapsed_time()) >= 500ms) {
                             printf("Average RPM: %g\n", fanrpm);
                             printf("Average Duty: %g\n", duty_cycle);
@@ -268,7 +287,23 @@ test.write(7);
                             lcd.locate(0, 1);  // Move the cursor to the second row
                             lcd.printf("Desired RPM:%d", target_value);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
                             printTimer.reset();
-                             }
+                             }*/
+
+                        if (fanrpm != previous_fan_rpm || target_value != previous_target_rpm) {
+                            lcd.cls();
+                            wait_us(2000);
+                            lcd.locate(0, 0);  // Move the cursor to the first row
+                            lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+
+                            lcd.locate(0, 1);  // Move the cursor to the second row
+                            lcd.printf("Desired RPM:%d", target_value);  // Print the target RPM (add trailing spaces to clear leftovers)
+
+                            // Update the previous values
+                            previous_fan_rpm = fanrpm;
+                            previous_target_rpm = target_value;
+                        }     
+
+                        
                     #endif
                     break;
 
@@ -293,7 +328,7 @@ test.write(7);
                      FanPWM.write(duty_cycle);
                     }
                 
-                    if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                    /*if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                             printTimer.elapsed_time()) >= 1000ms) {
                             lcd.cls();
                             wait_us(2000);
@@ -303,8 +338,21 @@ test.write(7);
                             lcd.printf("Current Temp:%d", current_temp);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
                             current_temp = Read_Temperature();
                             printTimer.reset();
-                            }
+                            }*/
+                    if (current_temp != previous_temp || target_temp != previous_target_rpm) {
+                            lcd.cls();
+                            wait_us(2000);
+                            lcd.locate(0, 0);  // Move the cursor to the first row
+                            lcd.printf("Target Temp:%d", target_temp);  // Print current fan RPM (add trailing spaces to clear leftovers)
+                            lcd.locate(0, 1);  // Move the cursor to the second row
+                            lcd.printf("Current Temp:%d", current_temp);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
 
+                            // Update the previous values
+                            previous_temp = current_temp;
+                            previous_target_temp = target_temp;
+                            current_temp = Read_Temperature();
+                            printTimer.reset();
+                        }     
 
                     break;
 
