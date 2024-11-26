@@ -17,7 +17,7 @@ std::chrono::milliseconds tacho_period = 1000ms;
 //*** ROTARY_INPUT
 //*****************************
 #ifdef ROTARY_DEBUG
-    DigitalIn aClock(PA_1);
+    InterruptIn aClock(PA_1);
     DigitalIn bSignal(PA_4);
     DigitalOut led_A(PB_7);
     DigitalOut led_B(PA_15);

@@ -47,8 +47,8 @@ int Button_Mode = 0;
 int target_value;
 int current_temp;
 int target_temp;
-float previous_fan_rpm = -1.0;
-int previous_duty_cycle = -1;
+float previous_fan_rpm = 0;
+float previous_duty_cycle = -1;
 int previous_target_rpm = -1;
 float previous_temp = -1.0;
 int previous_target_temp = -1;
@@ -89,26 +89,19 @@ test.write(7);
     printTimer.start();
 
 
-    lcd.cls();            // Clear screen
+    lcd.cls(); 
+    wait_us(2000);          // Clear screen
     lcd.locate(0, 0);     // Move cursor to (0,0)
     lcd.printf(" Hello"); 
+    wait_us(500000);
     
    // lcd.cls();            // Clear screen
    // lcd.locate(-1, 0);     // Move cursor to (0,0)
     //lcd.printf(" Hello");  // Display "Hello" on the screen
 
     InitializeButtonInput();
-    // Runs Tacho mode when TACHO_DEBUG is defined in "pins_config.h" (only define one at a time)
-    #ifdef TACHO_DEBUG
-        // Tacho
-        Init_Calculate_Fan_RPM();
-        Init_PID_Controller(pid_lowspeed_ptr, lowspeed_controller_params);
-    #endif
+    Init_Calculate_Fan_RPM();
 
-    // Runs PID mode when PID_DEBUG is defined in "pins_config.h" (only define one at a time)
-    #ifdef PID_DEBUG
-        // PID
-    #endif
 
     // Runs Timer mode when TIMER_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef TIMER_DEBUG
@@ -116,21 +109,13 @@ test.write(7);
         Init_Timer_Mode();
     #endif
 
-    #ifdef ROTARY_DEBUG
-        Init_Rotary_Input(Button_Mode);
-    #endif
-
     FanPWM.period(0.00242);
-    FanPWM.write(0.00111);
+    //FanPWM.write(0.00111);
    
-    
+    Init_Rotary_Input(Button_Mode);
+
     while (true) {   
          //FanPWM.write(1);
-         
-        #ifdef TIMER_DEBUG
-            printf("Timer Value %d\n", timer_value);
-        #endif
-
         // Check if the button was pressed to change the mode
         if (WasButtonPressed()) {
             Button_Mode++;     
@@ -144,10 +129,15 @@ test.write(7);
                 Detach_Low_Speed_Pulses();
                 sevseg.SevSegWriteOnes(seg_zero);
                 sevseg.SevSegWriteTens(seg_zero);
-                low_speed_mode = false;
+                lcd.cls();
+                wait_us(2000);
+                lcd.locate(0, 0);  
+                lcd.printf("Open Loop Mode"); 
+                wait_us(1000000);
                 break;
             case 1:
                 // Mode 1: PID Speed Control
+                previous_duty_cycle = -1;
                 if (target_value >= 1000){
                     Init_PID_Controller(pid_highspeed_ptr, highspeed_controller_params);
                 }
@@ -157,20 +147,36 @@ test.write(7);
                 printf("target value = %d\n", target_value);
                 sevseg.SevSegWriteOnes(seg_one);
                 sevseg.SevSegWriteTens(seg_zero);
+                lcd.cls();
+                wait_us(2000);
+                lcd.locate(0, 0);  
+                lcd.printf("Speed Control"); 
+                lcd.locate(0, 1);  
+                lcd.printf("Mode");
+                wait_us(1000000);
                 break;
             case 2:
                 // Mode 2: PID Temperature Limiting  
+                previous_target_rpm = -1;     
                 Init_PID_Controller(pid_temp_ptr, temp_controller_params);
                 sevseg.SevSegWriteOnes(seg_two);
                 sevseg.SevSegWriteTens(seg_zero);
+                lcd.cls();
+                wait_us(2000);
+                lcd.locate(0, 0);  
+                lcd.printf("Temp Limit Mode"); 
+                wait_us(1000000);
                 current_temp = Read_Temperature();
                 break;
             case 3:
                 // Mode 3: Timer display (e.g., TIMER mode)
-                lcd.locate(0, 0);  // Move the cursor to the first row
-                lcd.printf("Max Speed Timer Mode");  //
+                previous_target_temp = -1;
                 sevseg.SevSegWriteOnes(seg_three);
                 sevseg.SevSegWriteTens(seg_zero);
+                lcd.cls();
+                wait_us(10000);
+                lcd.locate(0, 0);  
+                lcd.printf("Max Speed Timer Mode");  //
                 break;
             case 4:
                 break;
@@ -179,25 +185,18 @@ test.write(7);
                 Init_Low_Speed_Pulses();
                 sevseg.SevSegWriteOnes(seg_five);
                 sevseg.SevSegWriteTens(seg_zero);
-                low_speed_mode = true;
                 break;
-
             default:
                 // Mode 0: Open Loop Speed Control
-                
                 break;
         }
-            #ifdef ROTARY_DEBUG
-                Init_Rotary_Input(Button_Mode);
-            #endif
-            
 
+            Init_Rotary_Input(Button_Mode);
             printf("Switched to mode %d\n", Button_Mode);
         }
             switch (Button_Mode) {
-                case 0:
-                    
-                    Rotary_Input();  // Update encoder position
+                case 0:      
+
                     target_value = RotaryInput_GetPosition();  // Get the current encoder position
                     duty_cycle = target_value/100.0;
                     if (target_value > 0 && fanrpm <= 10.0){
@@ -207,26 +206,11 @@ test.write(7);
                      FanPWM.write(duty_cycle);
                     }
 
-                   
-                    /*if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                            printTimer.elapsed_time()) >= 1000ms) {
-                            printf("Average RPM: %g\n", fanrpm);
-                            //printf("PWM duty %g\n", pid_output);
-                            //printf("rotary position: %d\n", target_value);
+                    if (fanrpm != previous_fan_rpm || duty_cycle != previous_duty_cycle) {
                             lcd.cls();
                             wait_us(2000);
                             lcd.locate(0, 0);  // Move the cursor to the first row
-                            lcd.printf("RPM: %.1f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
-                            lcd.locate(0, 1);  // Move the cursor to the first row
-                            lcd.printf("Duty Cycle: %.1f", duty_cycle);  //
-                            printTimer.reset();
-                             }*/
-
-                    if (fanrpm != previous_fan_rpm || target_value != previous_target_rpm) {
-                            lcd.cls();
-                            wait_us(10000);
-                            lcd.locate(0, 0);  // Move the cursor to the first row
-                            lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+                            lcd.printf("Current RPM:%0.1f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
 
                             lcd.locate(0, 1);  // Move the cursor to the second row
                             lcd.printf("Duty Cycle: %.1f", duty_cycle);
@@ -235,19 +219,18 @@ test.write(7);
                             previous_fan_rpm = fanrpm;
                             previous_duty_cycle = duty_cycle; 
                     }                
-
                     break;
 
                 case 1:
                     // Mode 1: PID Speed Control
                     #ifdef TACHO_DEBUG
                  
-                        Rotary_Input();  // Update encoder position
                         target_value = RotaryInput_GetPosition();  // Get the current encoder position
                         if (target_value > 0 && fanrpm <= 10.0){
                         Kick_Start_pulse(fanrpm);
                         }
                         else {
+
                         if (target_value >= 1000){
                             init_low_PID = true;
 
@@ -271,23 +254,6 @@ test.write(7);
                             FanPWM.write(duty_cycle);                    
                         }
                         }
-                        
-                        
-                        /*if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                            printTimer.elapsed_time()) >= 500ms) {
-                            printf("Average RPM: %g\n", fanrpm);
-                            printf("Average Duty: %g\n", duty_cycle);
-                            //printf("PWM duty %g\n", pid_output);
-                            //printf("rotary position: %d\n", target_value);
-                            lcd.cls();
-                            wait_us(2000);
-                            lcd.locate(0, 0);  // Move the cursor to the first row
-                            lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
-
-                            lcd.locate(0, 1);  // Move the cursor to the second row
-                            lcd.printf("Desired RPM:%d", target_value);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
-                            printTimer.reset();
-                             }*/
 
                         if (fanrpm != previous_fan_rpm || target_value != previous_target_rpm) {
                             lcd.cls();
@@ -301,19 +267,14 @@ test.write(7);
                             // Update the previous values
                             previous_fan_rpm = fanrpm;
                             previous_target_rpm = target_value;
-                        }     
-
-                        
+                        }        
                     #endif
                     break;
 
                 case 2:
                     // Mode 2: PID Temperature Limiting
                     // Read Temperature
-                    Rotary_Input();  // Update encoder position
-
                     target_temp = RotaryInput_GetPosition();
-
 
                     // PID Controller takes temp_pid parameters, current temperature, and input value
                     // if (current_temp > target_temp) {
@@ -328,17 +289,6 @@ test.write(7);
                      FanPWM.write(duty_cycle);
                     }
                 
-                    /*if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                            printTimer.elapsed_time()) >= 1000ms) {
-                            lcd.cls();
-                            wait_us(2000);
-                            lcd.locate(0, 0);  // Move the cursor to the first row
-                            lcd.printf("Target Temp:%d", target_temp);  // Print current fan RPM (add trailing spaces to clear leftovers)
-                            lcd.locate(0, 1);  // Move the cursor to the second row
-                            lcd.printf("Current Temp:%d", current_temp);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
-                            current_temp = Read_Temperature();
-                            printTimer.reset();
-                            }*/
                     if (current_temp != previous_temp || target_temp != previous_target_rpm) {
                             lcd.cls();
                             wait_us(2000);
@@ -346,19 +296,17 @@ test.write(7);
                             lcd.printf("Target Temp:%d", target_temp);  // Print current fan RPM (add trailing spaces to clear leftovers)
                             lcd.locate(0, 1);  // Move the cursor to the second row
                             lcd.printf("Current Temp:%d", current_temp);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
-
+                            current_temp = Read_Temperature();
+                            
                             // Update the previous values
                             previous_temp = current_temp;
                             previous_target_temp = target_temp;
-                            current_temp = Read_Temperature();
-                            printTimer.reset();
                         }     
 
                     break;
 
                 case 3:
                     // Mode 3: Timer display (e.g., TIMER mode)
-                        Rotary_Input();  // Update encoder position
                         start_timer = true;
                         target_value = RotaryInput_GetPosition();  // Get the current encoder position
                         duty_cycle = 0.3;

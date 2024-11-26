@@ -14,6 +14,9 @@ extern bool prevB;
 extern bool prevClk;
 extern bool currentClk;
 
+extern Timer rotaryTimer;
+extern std::chrono::microseconds rotaryWait_us;
+
 
 // Declares header functions
 void Init_Rotary_Input(int button_mode);
