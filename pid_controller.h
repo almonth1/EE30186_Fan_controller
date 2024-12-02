@@ -8,7 +8,7 @@
 extern float pid_output;
 extern float duty_cycle;
 extern Timer pid_timer;
-
+extern float bias;
 
 // structure "PID" of PID Parameters
 struct PID{
@@ -36,7 +36,7 @@ extern PID* pid_temp_ptr;
 // Declares header functions
 void Init_PID_Controller(PID *pid_params, PID param_init);
 void PID_Dummy();
-float PID_Control(PID *pid_params, uint16_t target_value, uint16_t current_value);
+float PID_Control(PID *pid_params, uint16_t target_value, uint16_t current_value, bool low_speed);
 
 
 #endif

@@ -9,7 +9,10 @@
 #define TACHO_DEBUG
 extern DigitalIn TACHO;
 extern std::chrono::milliseconds tacho_delay;
+extern std::chrono::milliseconds tacho_rise_filter;
+extern std::chrono::milliseconds tacho_fall_filter;
 extern std::chrono::milliseconds tacho_period;
+extern PwmOut FanPWM;
 
 #ifdef TACHO_DEBUG
 extern DigitalOut led;
@@ -20,7 +23,7 @@ extern DigitalOut led;
 //*****************************
 #define ROTARY_DEBUG
 #ifdef ROTARY_DEBUG
-    extern DigitalIn aClock;
+    extern InterruptIn aClock;
     extern DigitalIn bSignal;
     extern DigitalOut led_A;
     extern DigitalOut led_B;
@@ -47,4 +50,5 @@ extern std::chrono::microseconds pid_period;
 //*****************************
 extern I2C i2c;
 //*****************************
+
 #endif
