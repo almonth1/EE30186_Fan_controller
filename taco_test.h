@@ -22,6 +22,7 @@ extern float fanrpm ;
 extern int shdprint;
 
 extern float pulse_average;
+extern float pulse_width;
 
 // Declares header functions
 void Init_Calculate_Fan_RPM();

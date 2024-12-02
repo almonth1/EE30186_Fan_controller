@@ -8,9 +8,9 @@
 Timer pid_timer;
 float pid_output = 0;
 float duty_cycle;
-float bias = 0.0004;
+float bias = 0.00045;
 
-PID lowspeed_controller_params = {.error = 0, .Kp = 0.00000065, .Ki = 0.0000000000, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID lowspeed_controller_params = {.error = 0, .Kp = 0.000007, .Ki = 0.00000008, .Kd = 0, .d_error = 0, .prev_error = 0};
 // PID values is good for low speed, not high speed
 PID* pid_lowspeed_ptr = &lowspeed_controller_params;
 
@@ -51,10 +51,10 @@ float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_valu
             pid_output = 1.0;
         }
         else if (pid_output <= bias && target_value > 0) {
-            //pid_output = 0.0004;
-            //pid_params->i_error = 0;
+            pid_output = bias;
+            pid_params->i_error = 0;
         }
-        else if (pid_output <= 0.0004 && target_value == 0){
+        else if (pid_output < 0){
             pid_output = 0;
         } 
         // if (pid_params->i_error < 0 && low_speed == true ) {
