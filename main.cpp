@@ -90,12 +90,14 @@ int main() {
     lcd.printf(" Hello"); 
     wait_us(500000);
     
+
 //    // lcd.cls();            // Clear screen
 //    // lcd.locate(-1, 0);     // Move cursor to (0,0)
 //     //lcd.printf(" Hello");  // Display "Hello" on the screen
 
     InitializeButtonInput();
     Init_Calculate_Fan_RPM();
+
     // Runs Timer mode when TIMER_DEBUG is defined in "pins_config.h" (only define one at a time)
     #ifdef TIMER_DEBUG
         // Timer mode
@@ -108,7 +110,6 @@ int main() {
     Init_Rotary_Input(Button_Mode);
 
     while (true) {   
-
         // Check if the button was pressed to change the mode
         if (WasButtonPressed()) {
             Button_Mode++;     
@@ -172,6 +173,7 @@ int main() {
                 lcd.printf("Max Speed Timer Mode");  //
                 break;
             case 4:
+                
             if (target_value == 0) {
                 Button_Mode++;
                 FanPWM.write(0);
@@ -183,6 +185,7 @@ int main() {
                 lcd.locate(0, 0);  
                 lcd.printf("Case 5");
             }
+
                 break;
             case 5:
                 FanPWM.write(0);
@@ -193,6 +196,7 @@ int main() {
                 wait_us(10000);
                 lcd.locate(0, 0);  
                 lcd.printf("Case 5");
+
                 break;
             default:
                 // Mode 0: Open Loop Speed Control
@@ -226,6 +230,7 @@ int main() {
                             // Update the previous values
                             previous_fan_rpm = fanrpm;
                             previous_duty_cycle = duty_cycle; 
+
                     }        
                       if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                             printTimer.elapsed_time()) >= 1000ms) {
@@ -233,6 +238,7 @@ int main() {
                             printf("pulse vector =\n 1:%d\n 2:%d\n 3:%d\n",pulse_vector[0], pulse_vector[1], pulse_vector[2]);
                             printTimer.reset();
                             }        
+
                     break;
 
                 case 1:
@@ -282,6 +288,7 @@ int main() {
                             previous_fan_rpm = fanrpm;
                             previous_target_rpm = target_value;
                         }          
+
                     #endif
                     break;
 
@@ -302,7 +309,6 @@ int main() {
                     else {
                      FanPWM.write(duty_cycle);
                     }
-                
                     if (current_temp != previous_temp || target_temp != previous_target_rpm) {
                             lcd.cls();
                             wait_us(2000);
@@ -323,7 +329,7 @@ int main() {
                     // Mode 3: Timer display (e.g., TIMER mode)
                         start_timer = true;
                         target_value = RotaryInput_GetPosition();  // Get the current encoder position
-                       
+
                         duty_cycle = 0.3;
                         FanPWM.write(duty_cycle);
                         if (target_value == 0) {
@@ -338,7 +344,7 @@ int main() {
                             printf("target value = %d",target_value);
                             printTimer.reset();
                             }
-                   
+
                     break;
                 
                 case 4:
