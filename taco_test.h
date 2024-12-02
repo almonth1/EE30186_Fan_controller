@@ -27,5 +27,6 @@ extern float pulse_average;
 void Init_Calculate_Fan_RPM();
 void Calculate_Fan_RPM();
 void Tacho_Fall();
-
+void Falling_Edge_Pulse();
+void Rising_Edge_Pulse();
 #endif
