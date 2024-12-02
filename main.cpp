@@ -89,7 +89,6 @@ int main() {
     lcd.locate(0, 0);     // Move cursor to (0,0)
     lcd.printf(" Hello"); 
     wait_us(500000);
-    
 
 //    // lcd.cls();            // Clear screen
 //    // lcd.locate(-1, 0);     // Move cursor to (0,0)
@@ -110,6 +109,7 @@ int main() {
     Init_Rotary_Input(Button_Mode);
 
     while (true) {   
+
         // Check if the button was pressed to change the mode
         if (WasButtonPressed()) {
             Button_Mode++;     
@@ -173,7 +173,7 @@ int main() {
                 lcd.printf("Max Speed Timer Mode");  //
                 break;
             case 4:
-                
+
             if (target_value == 0) {
                 Button_Mode++;
                 FanPWM.write(0);
@@ -227,6 +227,7 @@ int main() {
                             lcd.locate(0, 1);  // Move the cursor to the second row
                             lcd.printf("Duty Cycle: %.1f", duty_cycle);
 
+
                             // Update the previous values
                             previous_fan_rpm = fanrpm;
                             previous_duty_cycle = duty_cycle; 
@@ -262,7 +263,6 @@ int main() {
                             duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm, false);
                             //FanPWM.period(0.002);
                             FanPWM.write(duty_cycle);
-                            
                         }
                         else{
                             init_high_PID = true;
@@ -291,7 +291,6 @@ int main() {
 
                     #endif
                     break;
-
                 case 2:
                     // Mode 2: PID Temperature Limiting
                     // Read Temperature
@@ -309,6 +308,7 @@ int main() {
                     else {
                      FanPWM.write(duty_cycle);
                     }
+
                     if (current_temp != previous_temp || target_temp != previous_target_rpm) {
                             lcd.cls();
                             wait_us(2000);
@@ -322,7 +322,6 @@ int main() {
                             previous_temp = current_temp;
                             previous_target_temp = target_temp;
                         }     
-
                     break;
 
                 case 3:
