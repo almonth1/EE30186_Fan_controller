@@ -8,7 +8,7 @@
 extern float pid_output;
 extern float duty_cycle;
 extern Timer pid_timer;
-
+extern float bias;
 
 // structure "PID" of PID Parameters
 struct PID{

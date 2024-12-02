@@ -9,6 +9,8 @@
 #define TACHO_DEBUG
 extern DigitalIn TACHO;
 extern std::chrono::milliseconds tacho_delay;
+extern std::chrono::milliseconds tacho_rise_filter;
+extern std::chrono::milliseconds tacho_fall_filter;
 extern std::chrono::milliseconds tacho_period;
 extern PwmOut FanPWM;
 
