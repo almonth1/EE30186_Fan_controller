@@ -3,6 +3,10 @@
 
 #include "mbed.h"
 #include "pins_config.h"
+#include "sev_seg_display.h"
+#include <cstdint>
+#include <cstdio>
+#include <stdint.h>
 
 extern uint8_t current_timer;
 extern Ticker timer_tick;

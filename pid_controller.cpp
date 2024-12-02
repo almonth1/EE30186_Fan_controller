@@ -9,7 +9,7 @@ Timer pid_timer;
 float pid_output = 0;
 float duty_cycle;
 
-PID lowspeed_controller_params = {.error = 0, .Kp = 0.000007, .Ki = 0.00000008, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID lowspeed_controller_params = {.error = 0, .Kp = 0.000005, .Ki = 0.00000003, .Kd = 0, .d_error = 0, .prev_error = 0};
 // PID values is good for low speed, not high speed
 PID* pid_lowspeed_ptr = &lowspeed_controller_params;
 
@@ -17,7 +17,7 @@ PID highspeed_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.00000001, .
 // PID values is good for low speed, not high speed
 PID* pid_highspeed_ptr = &highspeed_controller_params;
 
-PID temp_controller_params = {.error = 0, .Kp = 0.0003, .Ki = 0.000, .Kd = 0, .d_error = 0, .prev_error = 0};
+PID temp_controller_params = {.error = 0, .Kp = 1, .Ki = 0.000, .Kd = 0, .d_error = 0, .prev_error = 0};
 PID* pid_temp_ptr = &temp_controller_params;
 
 // Initializes PID Speed controller parameters 
@@ -49,18 +49,22 @@ float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_valu
         if (pid_output > 1) {
             pid_output = 1.0;
         }
-        else if (pid_output <= 0.0004) {
-            pid_output = 0.0004;
+        else if (pid_output <= 0.0003 && target_value > 0) {
+            pid_output = 0.0003;
         }
-        if (pid_params->i_error < 0) {
-         pid_params->i_error = 0;
-        }
+        else if (pid_output <= 0.0004 && target_value == 0){
+            pid_output = 0;
+        } 
+        // if (pid_params->i_error < 0 && low_speed == true ) {
+        //  pid_params->i_error = 0;
+        // }
         
         // printf(" error = %d\n", pid_params.error);
         // printf(" target = %d\n", target_value);
         // printf(" current = %d\n", current_value);
         // printf(" pid output = %f\n", pid_output);
         pid_timer.reset();
+        
                     }
     return pid_output;
 };

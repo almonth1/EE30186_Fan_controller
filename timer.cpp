@@ -1,7 +1,5 @@
 #include "timer.h"
-#include <cstdint>
-#include <cstdio>
-#include <stdint.h>
+
 
 Ticker timer_tick;
 
@@ -28,9 +26,11 @@ void Start_Timer(int set_timer){
 
 // Decrements timer value every 2 second. Detaches timer interrupt when timer reaches 0
 void Decrement_Timer(){
-    timer_value -= 1;
-    if (timer_value <= 0){
-        timer_tick.detach();
+    if (timer_value >99) {
+    timer_value = 99;
     }
+    timer_value -= 1;
+    
+
 }
 

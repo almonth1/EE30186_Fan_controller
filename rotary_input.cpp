@@ -13,9 +13,14 @@ bool prevB;
 bool prevClk;
 bool currentClk;
 
+std::chrono::microseconds rotaryWait_us = 0us;
+
+Timer rotaryTimer;
+
 // Function to initialize the rotary encoder
 void Init_Rotary_Input(int button_mode) {
     #ifdef ROTARY_DEBUG
+        aClock.rise(Rotary_Input);
         prevB = bSignal.read();
         prevClk = aClock.read();
         currentClk = aClock.read();
@@ -51,7 +56,9 @@ void Init_Rotary_Input(int button_mode) {
                 min_value = 0;
                 encoderPosition = min_value;
                 break;
-
+            case 4:
+                break;
+                
             default:
                 // Mode 0: Open Loop Speed Control
                 increment = 5;
@@ -65,7 +72,8 @@ void Init_Rotary_Input(int button_mode) {
 
 // Function to process the encoder input and update the position
 void Rotary_Input() {
-    #ifdef ROTARY_DEBUG
+    rotaryTimer.start();
+    if ( std::chrono::duration_cast<std::chrono::microseconds>(rotaryTimer.elapsed_time()) >= rotaryWait_us) {
         currentClk = aClock.read();
         if (currentClk != prevClk) {
             currentB = bSignal.read();
@@ -91,10 +99,12 @@ void Rotary_Input() {
             else if (encoderPosition < min_value) {
                     encoderPosition = min_value;  // Cap at maximum
                 }
-            printf("rotary position: %d\n", encoderPosition);
-            wait_us(1000);  // Basic debouncing delay
+            //printf("rotary position: %d\n", encoderPosition);
+            //wait_us(1000);  // Basic debouncing delay
         }
-    #endif
+        rotaryTimer.reset();
+    }
+
 }
 
 // Function to get the current encoder position
