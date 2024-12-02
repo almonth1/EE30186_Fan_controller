@@ -51,11 +51,14 @@ int Button_Mode = 0;
 int target_value;
 int current_temp;
 int target_temp;
+<<<<<<< HEAD
 float previous_fan_rpm = 0;
 float previous_duty_cycle = -1;
 int previous_target_rpm = -1;
 float previous_temp = -1.0;
 int previous_target_temp = -1;
+=======
+>>>>>>> parent of c787c3c (henry update)
 float pwm_period;
 bool init_low_PID = true;
 bool init_high_PID = true;
@@ -200,20 +203,21 @@ int main() {
                     else {
                      FanPWM.write(duty_cycle);
                     }
-
-                    if (fanrpm != previous_fan_rpm || duty_cycle != previous_duty_cycle) {
+                   
+                    if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 1000ms) {
+                            printf("Average RPM: %g\n", fanrpm);
+                            //printf("PWM duty %g\n", pid_output);
+                            //printf("rotary position: %d\n", target_value);
                             lcd.cls();
                             wait_us(2000);
                             lcd.locate(0, 0);  // Move the cursor to the first row
-                            lcd.printf("Current RPM:%0.1f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+                            lcd.printf("RPM: %.1f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+                            lcd.locate(0, 1);  // Move the cursor to the first row
+                            lcd.printf("Duty Cycle: %.1f", duty_cycle);  //
+                            printTimer.reset();
+                             }
 
-                            lcd.locate(0, 1);  // Move the cursor to the second row
-                            lcd.printf("Duty Cycle: %.1f", duty_cycle);
-
-                            // Update the previous values
-                            previous_fan_rpm = fanrpm;
-                            previous_duty_cycle = duty_cycle; 
-                    }                
                     break;
 
                 case 1:
@@ -248,21 +252,31 @@ int main() {
                             duty_cycle = PID_Control(pid_lowspeed_ptr, target_value, fanrpm, true);
                             FanPWM.write(duty_cycle);                    
                         }
-                        }
+                        }          
+                        
+                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 500ms) {
+                            printf("Average RPM: %g\n", fanrpm);
+                            printf("Average Duty: %g\n", duty_cycle);
+                            //printf("PWM duty %g\n", pid_output);
+                            //printf("rotary position: %d\n", target_value);
 
-                        if (fanrpm != previous_fan_rpm || target_value != previous_target_rpm) {
                             lcd.cls();
                             wait_us(2000);
                             lcd.locate(0, 0);  // Move the cursor to the first row
                             lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
 
                             lcd.locate(0, 1);  // Move the cursor to the second row
+
                             lcd.printf("Desired RPM:%d", target_value);  // Print the target RPM (add trailing spaces to clear leftovers)
 
                             // Update the previous values
                             previous_fan_rpm = fanrpm;
                             previous_target_rpm = target_value;
                         }        
+                            lcd.printf("Desired RPM:%d", target_value);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
+                            printTimer.reset();
+                             }
                     #endif
                     break;
 
@@ -285,8 +299,13 @@ int main() {
                      FanPWM.write(duty_cycle);
                     }
                 
+<<<<<<< HEAD
 
                     if (current_temp != previous_temp || target_temp != previous_target_rpm) {
+=======
+                    if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 1000ms) {
+>>>>>>> parent of c787c3c (henry update)
                             lcd.cls();
                             wait_us(2000);
                             lcd.locate(0, 0);  // Move the cursor to the first row
@@ -294,11 +313,17 @@ int main() {
                             lcd.locate(0, 1);  // Move the cursor to the second row
                             lcd.printf("Current Temp:%d", current_temp);  // Print the PWM duty cycle (add trailing spaces to clear leftovers)
                             current_temp = Read_Temperature();
+<<<<<<< HEAD
                             
                             // Update the previous values
                             previous_temp = current_temp;
                             previous_target_temp = target_temp;
                         }     
+=======
+                            printTimer.reset();
+                            }
+
+>>>>>>> parent of c787c3c (henry update)
 
                     break;
 
