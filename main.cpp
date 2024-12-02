@@ -28,6 +28,7 @@
 //** Extensions
 // voltage monitor?
 // settings mode to change params (rotary sensitivity, OTW threshold, Abnormal speed threshold)
+// help page for controller (on button hold and start up)
 // OTW
 
 
@@ -77,55 +78,8 @@ TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
 
 SevSeg sevseg(PB_11, PB_12, PA_11, PA_12, PA_6, PA_7, PB_6, PC_5, PC_6, PB_1,PC_8, PC_4, PA_10, PB_2);
 
-
-int main() {
-
-
-    sevseg.InitSegDict();
-    sevseg.SevSegWriteOnes(sev_seg_dict[Button_Mode]);
-    sevseg.SevSegWriteTens(seg_zero);
-    printTimer.start();
-
-    wait_us(2000);          // Clear screen
-    lcd.cls(); 
-    wait_us(2000);          // Clear screen
-    lcd.locate(0, 0);     // Move cursor to (0,0)
-    lcd.printf(" Welcome "); 
-    wait_us(1000000);
-    
-    Write_Temp_Command();
-    led_Ext.write(0);
-
-    InitializeButtonInput();
-    Init_Calculate_Fan_RPM();
-    // Runs Timer mode when TIMER_DEBUG is defined in "pins_config.h" (only define one at a time)
-
-        // Timer mode
-        Init_Timer_Mode();
-    
-
-    FanPWM.period(0.00242);
-    //FanPWM.write(0.00111);
-   
-    Init_Rotary_Input(Button_Mode);
-
-    while (true) {   
-        current_temp = Read_Temperature();  
-        if (current_temp > Temperature_Warning) {
-            FanPWM.write(1);
-            OTW_tick.attach(&OTW_Blinky,300ms);
-            lcd.cls();
-            wait_us(2000);
-            lcd.locate(0, 0);  
-            lcd.printf("Over-Temperature"); 
-            lcd.locate(2,1);
-            lcd.printf("! Temp:%dC !", current_temp);
-            wait_us(500000);
-            lcd.cls();
-            wait_us(500000);
-        }
-        else {
-            // Check if the button was pressed to change the mode
+void OnButtonPressHandler(){
+    // Check if the button was pressed to change the mode
             if (WasButtonPressed()) {
                 Button_Mode++;     
                 if (Button_Mode > 5) {
@@ -218,6 +172,11 @@ int main() {
                 printf("Switched to mode %d\n", Button_Mode);
             }
             
+}
+
+void ButtonModeHandler(){
+    
+    
                 switch (Button_Mode) {
                     case 0:      
 
@@ -396,6 +355,64 @@ int main() {
                         Button_Mode = 0;
                         break;
                 }
+    
+}
+
+int main() {
+    
+    wait_us(2000);          // Clear screen
+    lcd.cls(); 
+    wait_us(2000);          // Clear screen
+    lcd.locate(0, 0);     // Move cursor to (0,0)
+    lcd.printf("Welcome To Fan  Controller!"); 
+    wait_us(2000000);
+
+    lcd.cls(); 
+    wait_us(2000);          // Clear screen
+    lcd.locate(0, 0);     // Move cursor to (0,0)
+    lcd.printf("BTN => Mode"); 
+    lcd.locate(0, 1);     // Move cursor to (0,0)
+    lcd.printf("ROT => Val"); 
+    wait_us(2000000);
+    
+    
+    sevseg.InitSegDict();
+    sevseg.SevSegWriteOnes(sev_seg_dict[Button_Mode]);
+    sevseg.SevSegWriteTens(seg_zero);
+
+    Write_Temp_Command();
+
+    led_Ext.write(0);
+
+    InitializeButtonInput();
+    Init_Calculate_Fan_RPM();
+    Init_Timer_Mode();
+    Init_Rotary_Input(Button_Mode);
+    
+
+    FanPWM.period(0.00242);
+    //FanPWM.write(0.00111);
+
+    printTimer.start();
+   
+    while (true) {   
+        current_temp = Read_Temperature();  
+        if (current_temp > Temperature_Warning) {
+            FanPWM.write(1);
+            OTW_tick.attach(&OTW_Blinky,300ms);
+            lcd.cls();
+            wait_us(2000);
+            lcd.locate(0, 0);  
+            lcd.printf("Over-Temperature"); 
+            lcd.locate(2,1);
+            lcd.printf("! Temp:%dC !", current_temp);
+            wait_us(500000);
+            lcd.cls();
+            wait_us(500000);
+            }
+        else {
+            OnButtonPressHandler();
+            ButtonModeHandler();
         }
     }
 }

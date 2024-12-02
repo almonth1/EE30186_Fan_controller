@@ -8,7 +8,7 @@
 Timer pid_timer;
 float pid_output = 0;
 float duty_cycle;
-float bias = 0.00045;
+float bias = 0.0008;
 
 PID lowspeed_controller_params = {.error = 0, .Kp = 0.000007, .Ki = 0.00000008, .Kd = 0, .d_error = 0, .prev_error = 0};
 // PID values is good for low speed, not high speed
