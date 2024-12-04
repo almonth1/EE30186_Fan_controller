@@ -78,6 +78,7 @@ TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
 
 SevSeg sevseg(PB_11, PB_12, PA_11, PA_12, PA_6, PA_7, PB_6, PC_5, PC_6, PB_1,PC_8, PC_4, PA_10, PB_2);
 
+
 void OnButtonPressHandler(){
     // Check if the button was pressed to change the mode
             if (WasButtonPressed()) {
@@ -151,6 +152,7 @@ void OnButtonPressHandler(){
                     lcd.locate(0, 0);  
                     lcd.printf("Case 5");
                 }
+
                     break;
                 case 5:
                     FanPWM.write(0);
@@ -168,17 +170,20 @@ void OnButtonPressHandler(){
             }
             
 
+
                 Init_Rotary_Input(Button_Mode);
                 printf("Switched to mode %d\n", Button_Mode);
             }
             
 }
 
+
 void ButtonModeHandler(){
     
     
                 switch (Button_Mode) {
                     case 0:      
+
 
                         target_value = RotaryInput_GetPosition();  // Get the current encoder position
                         duty_cycle = target_value/100.0;
@@ -230,6 +235,7 @@ void ButtonModeHandler(){
                                 init_high_PID = false;
                                 }
 
+
                                 duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm, false);
                                 //FanPWM.period(0.002);
                                 FanPWM.write(duty_cycle);
@@ -273,11 +279,12 @@ void ButtonModeHandler(){
                     
                         if (target_value < target_temp && fanrpm <= 10.0){
                             Kick_Start_pulse(fanrpm);
+
                         }
                         else {
                         FanPWM.write(duty_cycle);
                         }
-                
+         
                         if (current_temp != previous_temp || target_temp != previous_target_rpm) {
                                 lcd.cls();
                                 wait_us(2000);
