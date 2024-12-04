@@ -8,9 +8,8 @@ uint8_t timer_value;
 
 // initiates hardware interrupt which starts timer every time the Timer_Test button is clicked. Also intializes the timer value
 void Init_Timer_Mode(){
-    #ifdef TIMER_DEBUG
         timer_value = 0;
-    #endif  
+  
 }
 
 // sets timer_value and attaches interrupt to decrement every 1 second

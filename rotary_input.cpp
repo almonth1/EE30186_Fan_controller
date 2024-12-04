@@ -19,7 +19,7 @@ Timer rotaryTimer;
 
 // Function to initialize the rotary encoder
 void Init_Rotary_Input(int button_mode) {
-    #ifdef ROTARY_DEBUG
+
         aClock.rise(Rotary_Input);
         prevB = bSignal.read();
         prevClk = aClock.read();
@@ -67,7 +67,7 @@ void Init_Rotary_Input(int button_mode) {
                 encoderPosition = min_value;
                 break;
         }
-    #endif
+
 }
 
 // Function to process the encoder input and update the position
