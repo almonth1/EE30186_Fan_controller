@@ -69,7 +69,7 @@ int set_timer = 10;
 int previousButtonMode = -1;
 
 //** Safety
-int Temperature_Warning = 50;
+int Temperature_Warning = 80;
 
 TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
 
@@ -203,12 +203,14 @@ void ButtonModeHandler(){
                                 previous_fan_rpm = fanrpm;
                                 previous_duty_cycle = duty_cycle; 
                         }        
-                        //   if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                        //         printTimer.elapsed_time()) >= 1000ms) {
-                        //         printf("Average RPM: %g\n", fanrpm);
-                        //         printf("pulse vector =\n 1:%d\n 2:%d\n 3:%d\n",pulse_vector[0], pulse_vector[1], pulse_vector[2]);
-                        //         printTimer.reset();
-                        //         }        
+                          if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                                printTimer.elapsed_time()) >= 100ms) {
+                                //printf("Average RPM: %g\n", fanrpm);
+                                //printf("Pulse Width: %g\n", pulse_width);
+                                printf("Pulse Average:%g\n", pulse_width_average);
+                                printf("pulse vector =\n 1:%g\n 2:%g\n 3:%g\n",pulse_width_vector[0], pulse_width_vector[1], pulse_width_vector[2]);
+                                printTimer.reset();
+                                }        
                         break;
 
                     case 1:

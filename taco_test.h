@@ -7,7 +7,7 @@
 #include <chrono>
 #include <vector>
 #include <numeric>
-
+#include <cmath>
 // Declaring header variables
 
 extern Ticker tacho_tick;
@@ -15,14 +15,15 @@ extern std::chrono::milliseconds tacho_delay;
 extern InterruptIn tacho_interrupt;
 
 extern int pulse_count;
-extern vector<int> pulse_vector;
+extern vector<float> pulse_width_vector;
 
 extern int prevpulse;
 extern float fanrpm ;
 extern int shdprint;
 
-extern float pulse_average;
+extern float pulse_width_average;
 extern float pulse_width;
+extern float pulse_width_temp;
 
 // Declares header functions
 void Init_Calculate_Fan_RPM();

@@ -9,9 +9,9 @@
 
 extern DigitalIn TACHO;
 extern std::chrono::milliseconds tacho_delay;
-extern std::chrono::milliseconds tacho_rise_filter;
-extern std::chrono::milliseconds tacho_fall_filter;
+extern std::chrono::milliseconds tacho_filter;
 extern std::chrono::milliseconds tacho_period;
+extern std::chrono::milliseconds tacho_wait_timer;
 extern PwmOut FanPWM;
 extern DigitalOut led;
 

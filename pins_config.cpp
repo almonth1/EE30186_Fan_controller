@@ -11,8 +11,8 @@
     PwmOut FanPWM(PB_0);
 
 std::chrono::milliseconds tacho_delay = 13ms;
-std::chrono::milliseconds tacho_rise_filter = 7ms;
-std::chrono::milliseconds tacho_fall_filter = 7ms ;
+std::chrono::milliseconds tacho_filter = 7ms ;
+std::chrono::milliseconds tacho_wait_timer = 0ms ;
 std::chrono::milliseconds tacho_period = 300ms;
 //*****************************
 
