@@ -29,6 +29,7 @@ float med_speed_bias = (low_speed_bias + high_speed_bias)/2;
 
 // calculates rpm value and sets flag to print result
 void CalculateRPM () {
+    
 
     // // Calculate weighted average of pulse counts
     // float weighted_sum = 0.0;
@@ -42,6 +43,11 @@ void CalculateRPM () {
 
     // // Calculate the weighted average
     // //pulse_weighted_average = weighted_sum / weight_sum;
+
+     if (tacho_fall_timer.elapsed_time() > 1000ms ) {
+        pulse_width_vector = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0};
+        
+    }
 
     // If pulse_vector[0] is 0 (no data), use raw pulse count for calculation
     if (pulse_width_vector[0] == 0) {
@@ -128,7 +134,6 @@ void Falling_Edge_Pulse(){
             pulse_width_vector.push_back(pulse_width);
             pulse_width_average = std::accumulate(pulse_width_vector.begin(), pulse_width_vector.end(), 0.0) / pulse_width_vector.size();
     }
-    
 
 }
 void Rising_Edge_Pulse(){
