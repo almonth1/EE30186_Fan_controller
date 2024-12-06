@@ -50,7 +50,7 @@
 // high speed PID still to do
 
 int Button_Mode = 0;
-int target_value;
+float target_value;
 int current_temp;
 int target_temp;
 float previous_fan_rpm = 0;
@@ -78,12 +78,21 @@ TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
 
 SevSeg sevseg(PB_11, PB_12, PA_11, PA_12, PA_6, PA_7, PB_6, PC_5, PC_6, PB_1,PC_8, PC_4, PA_10, PB_2);
 
-
+void OnButtonHeldHandler(){
+    if (WasButtonHeld()) {
+        Button_Mode = 10;        
+        lcd.cls();              // Clear screen
+        wait_us(2000000);          
+        lcd.locate(0, 0);     // Move cursor to (0,0)
+        lcd.printf("Loading Settings..."); 
+        wait_us(2000000);
+    }
+}
 void OnButtonPressHandler(){
     // Check if the button was pressed to change the mode
             if (WasButtonPressed()) {
                 Button_Mode++;     
-                if (Button_Mode > 5) {
+                if (Button_Mode > 4) {
                     Button_Mode = 0;  // Wrap around to mode 1 after mode 3
                 }
                 switch (Button_Mode){
@@ -120,6 +129,7 @@ void OnButtonPressHandler(){
                     break;
                 case 2:
                     // Mode 2: PID Temperature Limiting  
+                    i_error = 0;
                     previous_target_rpm = -1;     
                     Init_PID_Controller(pid_temp_ptr, temp_controller_params);
                     sevseg.SevSegWriteOnes(seg_two);
@@ -132,15 +142,22 @@ void OnButtonPressHandler(){
                     break;
                 case 3:
                     // Mode 3: Timer display (e.g., TIMER mode)
+                    i_error = 0;
                     previous_target_temp = -1;
                     sevseg.SevSegWriteOnes(seg_three);
                     sevseg.SevSegWriteTens(seg_zero);
                     lcd.cls();
-                    wait_us(10000);
+                    wait_us(2000);
                     lcd.locate(0, 0);  
-                    lcd.printf("Max Speed Timer Mode");  //
+                    lcd.printf("Timer Mode:");  //
+                    lcd.locate(0, 1); 
+                    lcd.printf("Set Time");
                     break;
                 case 4:
+                    lcd.cls();
+                    wait_us(10000);
+                    lcd.locate(0, 0);  
+                    lcd.printf("Fan Running...");  //
                 if (target_value == 0) {
                     Button_Mode++;
                     FanPWM.write(0);
@@ -154,18 +171,12 @@ void OnButtonPressHandler(){
                 }
 
                     break;
-                case 5:
-                    FanPWM.write(0);
-                    Init_Low_Speed_Pulses();
-                    sevseg.SevSegWriteOnes(seg_five);
-                    sevseg.SevSegWriteTens(seg_zero);
+                default:
+                    // Error Message
                     lcd.cls();
                     wait_us(10000);
                     lcd.locate(0, 0);  
-                    lcd.printf("Case 5");
-                    break;
-                default:
-                    // Mode 0: Open Loop Speed Control
+                    lcd.printf("Error Unkwon Mode");
                     break;
             }
             
@@ -198,10 +209,10 @@ void ButtonModeHandler(){
                                 lcd.cls();
                                 wait_us(2000);
                                 lcd.locate(0, 0);  // Move the cursor to the first row
-                                lcd.printf("Current RPM:%0.1f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
+                                lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
 
                                 lcd.locate(0, 1);  // Move the cursor to the second row
-                                lcd.printf("Duty Cycle: %.1f", duty_cycle);
+                                lcd.printf("Duty Cycle:%0.1f%%", target_value);
 
 
                                 // Update the previous values
@@ -209,11 +220,11 @@ void ButtonModeHandler(){
                                 previous_duty_cycle = duty_cycle; 
                         }        
                           if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                                printTimer.elapsed_time()) >= 100ms) {
+                                printTimer.elapsed_time()) >= 1000ms) {
                                 //printf("Average RPM: %g\n", fanrpm);
                                 //printf("Pulse Width: %g\n", pulse_width);
                                 printf("Pulse Average:%g\n", pulse_width_average);
-                                printf("pulse vector =\n 1:%g\n 2:%g\n 3:%g\n",pulse_width_vector[0], pulse_width_vector[1], pulse_width_vector[2]);
+                                // printf("pulse vector =\n 1:%g\n 2:%g\n 3:%g\n",pulse_width_vector[0], pulse_width_vector[1], pulse_width_vector[2]);
                                 printTimer.reset();
                                 }        
                         break;
@@ -227,7 +238,7 @@ void ButtonModeHandler(){
                             }
                             else {
 
-                            if (target_value >= 1000){
+                            if (target_value >= 500){
                                 init_low_PID = true;
 
                                 if(init_high_PID){
@@ -236,7 +247,7 @@ void ButtonModeHandler(){
                                 }
 
 
-                                duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm, false);
+                                duty_cycle = PID_Control(pid_highspeed_ptr, target_value, fanrpm, true);
                                 //FanPWM.period(0.002);
                                 FanPWM.write(duty_cycle);
                             }
@@ -258,12 +269,23 @@ void ButtonModeHandler(){
                                 lcd.printf("Current RPM:%0.0f", fanrpm);  // Print current fan RPM (add trailing spaces to clear leftovers)
 
                                 lcd.locate(0, 1);  // Move the cursor to the second row
-                                lcd.printf("Desired RPM:%d", target_value);  // Print the target RPM (add trailing spaces to clear leftovers)
+                                lcd.printf("Desired RPM:%0.0f", target_value);  // Print the target RPM (add trailing spaces to clear leftovers)
 
                                 // Update the previous values
                                 previous_fan_rpm = fanrpm;
                                 previous_target_rpm = target_value;
                             }          
+                              if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                                printTimer.elapsed_time()) >= 1000ms) {
+                                //printf("Average RPM: %g\n", fanrpm);
+                                //printf("Pulse Width: %g\n", pulse_width);
+                                printf("error %d\n", pid_lowspeed_ptr ->error);
+                                printf("i error %f\n", i_error);
+                                
+                                printf("duty:%0.5f\n", duty_cycle);
+                                // printf("pulse vector =\n 1:%g\n 2:%g\n 3:%g\n",pulse_width_vector[0], pulse_width_vector[1], pulse_width_vector[2]);
+                                printTimer.reset();
+                                }    
 
                         break;
                     case 2:
@@ -275,9 +297,9 @@ void ButtonModeHandler(){
                         // if (current_temp > target_temp) {
                         // PID_Control(pid_temp_ptr, current_temp , target_temp);
                         // }
-                        duty_cycle = PID_Control(pid_temp_ptr, current_temp , target_temp, false);
+                        duty_cycle = PID_Control(pid_temp_ptr, current_temp,target_temp, false);
                     
-                        if (target_value < target_temp && fanrpm <= 10.0){
+                        if (current_temp > target_temp && fanrpm <= 10.0){
                             Kick_Start_pulse(fanrpm);
 
                         }
@@ -296,6 +318,14 @@ void ButtonModeHandler(){
                                 previous_temp = current_temp;
                                 previous_target_temp = target_temp;
                             }     
+                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
+                            printTimer.elapsed_time()) >= 1000ms) {
+                            //printf("timer_value =%d\n",timer_value);
+                            printf("PWM duty %g\n", duty_cycle);
+                            //printf("Temp: %d\n" , data[0] );
+                            //printf("rotary position: %d\n", target_value);
+                            printTimer.reset();
+                            }
                         break;
 
                     case 3:
@@ -303,18 +333,18 @@ void ButtonModeHandler(){
                             start_timer = true;
                             target_value = RotaryInput_GetPosition();  // Get the current encoder position
                         
-                            duty_cycle = 0.3;
+                            duty_cycle = 0.2;
                             FanPWM.write(duty_cycle);
                             if (target_value == 0) {
                             sevseg.SevSegWriteOnes(seg_three);
                             }
                             else {
-                            sevseg.SevSegWriteOnes(sev_seg_dict[target_value % 10]);
-                            sevseg.SevSegWriteTens(sev_seg_dict[(target_value / 10) % 10 ]);
+                            sevseg.SevSegWriteOnes(sev_seg_dict[int(target_value) % 10]);
+                            sevseg.SevSegWriteTens(sev_seg_dict[(int(target_value) / 10) % 10 ]);
                             }
                             if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                                 printTimer.elapsed_time()) >= 1000ms) {
-                                printf("target value = %d",target_value);
+                                printf("target value = %0.0f",target_value);
                                 printTimer.reset();
                                 }
                     
@@ -329,13 +359,27 @@ void ButtonModeHandler(){
                         sevseg.SevSegWriteTens(sev_seg_dict[(timer_value / 10) % 10]);
                         if (timer_value == 0) {
                             timer_tick.detach();
-                            duty_cycle = 0.3;
+                            duty_cycle = 0.2;
+                            target_value = 0;
+                            lcd.cls();
+                            wait_us(2000);
+                            lcd.locate(0, 0);  
+                            lcd.printf("Timer Mode:");  //
+                            lcd.locate(0, 1); 
+                            lcd.printf("Set Time");
                             Button_Mode = 3;
+                            Init_Rotary_Input(Button_Mode);
                         }
                         else{
                             duty_cycle = 1.0;
                             FanPWM.write(duty_cycle);
-                        }      
+                            lcd.cls();
+                            wait_us(2000);
+                            lcd.locate(0, 0);  
+                            lcd.printf("Fan Running...");  //
+                        }   
+                       
+                          
                         if ( std::chrono::duration_cast<std::chrono::milliseconds>(
                                 printTimer.elapsed_time()) >= 1000ms) {
                                 printf("timer_value =%d\n",timer_value);
@@ -345,18 +389,10 @@ void ButtonModeHandler(){
                                 printTimer.reset();
                                 }
                         break;
-                    case 5:
-                        if (target_value > 0 && fanrpm <= 10.0){
-                            Kick_Start_pulse(fanrpm);
-                        }
-
-                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                                printTimer.elapsed_time()) >= 3000ms) {
-                                printf("Average RPM: %g\n", fanrpm);
-                                printf("Pulse Count = : %d\n", pulse_count);
-                                printTimer.reset();
-                                }
+                    case 10:
+                        target_value = RotaryInput_GetPosition();  // Get the current encoder position
                         
+                
                         break;
 
 
@@ -374,7 +410,7 @@ int main() {
     wait_us(2000);          // Clear screen
     lcd.locate(0, 0);     // Move cursor to (0,0)
     lcd.printf("Welcome To Fan  Controller!"); 
-    wait_us(2000000);
+    wait_us(2000);
 
     lcd.cls(); 
     wait_us(2000);          // Clear screen
@@ -382,7 +418,7 @@ int main() {
     lcd.printf("BTN => Mode"); 
     lcd.locate(0, 1);     // Move cursor to (0,0)
     lcd.printf("ROT => Val"); 
-    wait_us(2000000);
+    wait_us(2000);
     
     
     sevseg.InitSegDict();

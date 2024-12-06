@@ -7,6 +7,7 @@
 
 extern float pid_output;
 extern float duty_cycle;
+extern float i_error;
 extern Timer pid_timer;
 extern float bias;
 
@@ -18,7 +19,6 @@ struct PID{
     float Ki;
     float Kd;
 
-    int i_error;
     int16_t d_error;
 
     int16_t prev_error;
