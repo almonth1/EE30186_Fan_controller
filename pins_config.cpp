@@ -28,7 +28,7 @@ std::chrono::milliseconds tacho_period = 300ms;
 
 //****** PID
 //*****************************
-std::chrono::microseconds pid_period = 1000us;
+std::chrono::microseconds pid_period = 300000us;
 //*****************************
 
 

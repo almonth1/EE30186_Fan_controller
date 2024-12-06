@@ -48,8 +48,8 @@ void Kick_Start_pulse(float current_speed){
 
         if(std::chrono::duration_cast<std::chrono::milliseconds>(
             kick_start_timer.elapsed_time()) >= 100ms){
-            FanPWM.write(0.6);
-            low_speed_timeout.attach(&Low_Speed_Stop_Pulse, 60ms);
+            FanPWM.write(0.4);
+            low_speed_timeout.attach(&Low_Speed_Stop_Pulse, 70ms);
             kick_start_timer.reset();
             }        
  
@@ -64,4 +64,3 @@ void Detach_Low_Speed_Pulses(){
  low_speed_timer.stop();
  low_speed_timeout.detach();
 }
-
