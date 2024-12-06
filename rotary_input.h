@@ -2,6 +2,8 @@
 #define ROTARY_INPUT
 #include "mbed.h"
 #include "pins_config.h"
+#include "taco_test.h"
+#include "pid_controller.h"
 
 // Declares header variables
 extern float encoderPosition;

@@ -78,12 +78,21 @@ TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
 
 SevSeg sevseg(PB_11, PB_12, PA_11, PA_12, PA_6, PA_7, PB_6, PC_5, PC_6, PB_1,PC_8, PC_4, PA_10, PB_2);
 
-
+void OnButtonHeldHandler(){
+    if (WasButtonHeld()) {
+        Button_Mode = 10;        
+        lcd.cls();              // Clear screen
+        wait_us(2000000);          
+        lcd.locate(0, 0);     // Move cursor to (0,0)
+        lcd.printf("Loading Settings..."); 
+        wait_us(2000000);
+    }
+}
 void OnButtonPressHandler(){
     // Check if the button was pressed to change the mode
             if (WasButtonPressed()) {
                 Button_Mode++;     
-                if (Button_Mode > 5) {
+                if (Button_Mode > 4) {
                     Button_Mode = 0;  // Wrap around to mode 1 after mode 3
                 }
                 switch (Button_Mode){
@@ -162,18 +171,12 @@ void OnButtonPressHandler(){
                 }
 
                     break;
-                case 5:
-                    FanPWM.write(0);
-                    Init_Low_Speed_Pulses();
-                    sevseg.SevSegWriteOnes(seg_five);
-                    sevseg.SevSegWriteTens(seg_zero);
+                default:
+                    // Error Message
                     lcd.cls();
                     wait_us(10000);
                     lcd.locate(0, 0);  
-                    lcd.printf("Case 5");
-                    break;
-                default:
-                    // Mode 0: Open Loop Speed Control
+                    lcd.printf("Error Unkwon Mode");
                     break;
             }
             
@@ -386,18 +389,10 @@ void ButtonModeHandler(){
                                 printTimer.reset();
                                 }
                         break;
-                    case 5:
-                        if (target_value > 0 && fanrpm <= 10.0){
-                            Kick_Start_pulse(fanrpm);
-                        }
-
-                        if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                                printTimer.elapsed_time()) >= 3000ms) {
-                                printf("Average RPM: %g\n", fanrpm);
-                                printf("Pulse Count = : %d\n", pulse_count);
-                                printTimer.reset();
-                                }
+                    case 10:
+                        target_value = RotaryInput_GetPosition();  // Get the current encoder position
                         
+                
                         break;
 
 

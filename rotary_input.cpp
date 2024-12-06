@@ -1,7 +1,5 @@
 #include "rotary_input.h"
-#include "mbed.h"
-#include "taco_test.h"
-#include "pid_controller.h"
+
 
 // Global variable to track the encoder position
 float encoderPosition = 0;  // Initialize to zero or your desired starting value
@@ -112,6 +110,13 @@ void Init_Rotary_Input(int button_mode) {
             // Mode 3: Timer display (e.g., TIMER mode)
             baseIncrement = 1;
             max_value = 99;
+            min_value = 0;
+            encoderPosition = min_value;
+            break;
+         case 10:
+            // Mode 3: Timer display (e.g., TIMER mode)
+            baseIncrement = 1;
+            max_value = 2;
             min_value = 0;
             encoderPosition = min_value;
             break;
