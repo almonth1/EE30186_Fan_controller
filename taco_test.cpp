@@ -1,4 +1,3 @@
-
 #include "taco_test.h"
 #include "low_speed_pulse.h"
 #include <cstdio>
@@ -23,8 +22,8 @@ float pulse_width_filter = 0.0;
 float pulse_width_temp = 0.0;
 float min_threshold = 0.0;
 float max_threshold = 0.0;
-float low_speed_bias = 0.0018;
-float high_speed_bias =  0.000503;
+float low_speed_bias = 0.0028;
+float high_speed_bias =  0.0005; 
 float med_speed_bias = (low_speed_bias + high_speed_bias)/2;
 
 // calculates rpm value and sets flag to print result
@@ -71,12 +70,12 @@ void CalculateRPM () {
         //     pulse_width_average = std::accumulate(pulse_width_vector.begin(), pulse_width_vector.end(), 0.0) / pulse_width_vector.size();
         // }
         fanrpm = 60/((pulse_width_average)*4);
-        if (fanrpm >= 1300){
+        if (fanrpm >= 600){
             fanrpm = 60/((pulse_width_average  + high_speed_bias)*4);
         }
-        else if(  600 <= fanrpm || fanrpm < 1300){
-            fanrpm = 60/((pulse_width_average  + med_speed_bias)*4);
-        }
+        // else if(  600 <= fanrpm || fanrpm < 1300){
+        //     fanrpm = 60/((pulse_width_average  + med_speed_bias)*4);
+        // }
         else {
             fanrpm = 60/((pulse_width_average  + low_speed_bias)*4);
         }
