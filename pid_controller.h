@@ -4,12 +4,20 @@
 #include "mbed.h"
 #include <cstdint>
 #include "pins_config.h"
+#include "taco_test.h"
+#include <chrono>
+#include <cstdint>
+#include <cstdio>
+
+
 
 extern float pid_output;
 extern float duty_cycle;
 extern float i_error;
 extern Timer pid_timer;
 extern float bias;
+extern int low_speed_threshold;
+extern float dt;
 
 // structure "PID" of PID Parameters
 struct PID{

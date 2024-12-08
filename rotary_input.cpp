@@ -76,15 +76,17 @@ void Init_Rotary_Input(int button_mode) {
     switch (button_mode) {
         case 0:
             // Mode 0: Open Loop Speed Control
+            maxSpeedFactor = 0.8; 
             baseIncrement = 0.1;
             max_value = 100;
             min_value = 0;
-            encoderPosition = duty_cycle;
+            encoderPosition = duty_cycle*100;
             break;
 
         case 1:
             // Mode 1: PID Speed Control
-            baseIncrement = 50;
+            maxSpeedFactor = 0.3; 
+            baseIncrement = 10;
             max_value = 1750;
             min_value = 0;
             encoderPosition = fanrpm/10;
@@ -113,10 +115,43 @@ void Init_Rotary_Input(int button_mode) {
             min_value = 0;
             encoderPosition = min_value;
             break;
-         case 10:
-            // Mode 3: Timer display (e.g., TIMER mode)
+        case 10:
+            // Settings Page
+            maxSpeedFactor = 0; 
+            baseIncrement = 0.5;
+            max_value = 3;
+            min_value = 1;
+            encoderPosition = min_value;
+            break;
+        case 11:
+        //OTW Settings page
             baseIncrement = 1;
-            max_value = 2;
+            max_value = 100;
+            min_value = 10;
+            encoderPosition = Temperature_Warning;
+            break;
+            
+        case 12:
+        //Abnormal Speed Settings page
+            maxSpeedFactor = 0.3; 
+            baseIncrement = 10;
+            max_value = 2500;
+            min_value = 1500;
+            encoderPosition = Abnormal_Speed;
+            break;
+
+        case 13:
+            //Voltage Stats Settings page - Default, not used
+            baseIncrement = 5;
+            max_value = 100;
+            min_value = 0;
+            encoderPosition = min_value;
+            break;
+
+         case 14:
+            //Voltage Stats Settings page - Default, not used
+            baseIncrement = 5;
+            max_value = 100;
             min_value = 0;
             encoderPosition = min_value;
             break;

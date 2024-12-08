@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "pins_config.h"
 
+
 /////////////////////////////////
 
 //*** TACHO and SPEED CONTROL
@@ -36,4 +37,11 @@ std::chrono::microseconds pid_period = 300000us;
 //*****************************
 I2C i2c(PB_9,PB_8);
 DigitalOut led_Ext(PC_0);
+//*****************************
+
+
+//*** LCD
+//*****************************
+TextLCD lcd(PB_15, PB_14, PB_5, PB_4, PB_10, PA_8);
+
 //*****************************

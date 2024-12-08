@@ -5,9 +5,12 @@
 
 
 extern Timer buttonTimer;
+extern int Button_Mode;
 extern bool buttonHoldFlag; 
+extern bool settingsModeFlag;
+extern bool buttonPressedFlag;
 // A small delay to ignore debounce button 
-constexpr std::chrono::milliseconds debounceDelay = 100ms;
+constexpr std::chrono::milliseconds debounceDelay = 50ms;
 
 constexpr std::chrono::milliseconds buttonHoldTime = 1000ms;
 

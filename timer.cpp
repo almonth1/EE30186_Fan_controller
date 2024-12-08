@@ -25,11 +25,20 @@ void Start_Timer(int set_timer){
 
 // Decrements timer value every 2 second. Detaches timer interrupt when timer reaches 0
 void Decrement_Timer(){
+
     if (timer_value >99) {
     timer_value = 99;
     }
+    else if (timer_value == 0) {
+    wait_us(1000);
+    }
+    
     timer_value -= 1;
     
 
 }
 
+void ResetTimer(){
+    timer_tick.detach();
+    timer_value = 0;
+}

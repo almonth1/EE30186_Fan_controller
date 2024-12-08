@@ -1,6 +1,7 @@
 #ifndef PINS_CONFIG
 #define PINS_CONFIG
 #include "mbed.h"
+#include "LCDText.h"
 
 // File for Setting Hardware Pins and Debug states
 
@@ -36,6 +37,12 @@ extern std::chrono::microseconds pid_period;
 //*****************************
 extern I2C i2c;
 extern DigitalOut led_Ext;
+//*****************************
+
+//*** LCD
+//*****************************
+extern TextLCD lcd;
+
 //*****************************
 
 #endif

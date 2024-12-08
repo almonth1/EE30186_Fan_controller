@@ -18,5 +18,6 @@ extern int set_timer;
 void Init_Timer_Mode();
 void Start_Timer(int set_timer);
 void Decrement_Timer();
+void ResetTimer();
 
 #endif

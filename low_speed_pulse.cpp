@@ -56,11 +56,6 @@ void Kick_Start_pulse(float current_speed){
 }
 
 void Init_Low_Speed_Pulses(){
-    low_speed_timer.start();
-    
+    low_speed_timer.start(); 
 }
 
-void Detach_Low_Speed_Pulses(){
- low_speed_timer.stop();
- low_speed_timeout.detach();
-}

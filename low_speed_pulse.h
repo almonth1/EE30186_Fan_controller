@@ -11,7 +11,6 @@ extern bool low_speed_mode;
 
 void Low_Speed_Start_Pulse();
 void Low_Speed_Stop_Pulse();
-void Init_Low_Speed_Pulses();
-void Detach_Low_Speed_Pulses();
+
 void Kick_Start_pulse(float current_speed);
 #endif

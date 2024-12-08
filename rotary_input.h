@@ -4,6 +4,7 @@
 #include "pins_config.h"
 #include "taco_test.h"
 #include "pid_controller.h"
+#include "settings_page.h"
 
 // Declares header variables
 extern float encoderPosition;
