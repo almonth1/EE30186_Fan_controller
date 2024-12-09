@@ -50,7 +50,7 @@
 // with current PI config, big overshoot at 500-1000rpm 
 // high speed PID still to do
 
-int prev_button_mode = 0;
+int prev_button_mode = 1;
 float target_value;
 int current_temp;
 
@@ -62,6 +62,7 @@ int previous_page;
 
 float pwm_period;
 bool init_low_PID = true;
+bool init_med_PID = true;
 bool init_high_PID = true;
 
 
@@ -305,8 +306,9 @@ void ButtonModeHandler(){
                             }
                             else {
 
-                                if (target_value >= low_speed_threshold){
+                                if (target_value >= med_speed_threshold){
                                     init_low_PID = true;
+                                    init_med_PID = true;
 
                                     if(init_high_PID){
                                     Init_PID_Controller(pid_highspeed_ptr, highspeed_controller_params);
@@ -318,8 +320,23 @@ void ButtonModeHandler(){
                                     //FanPWM.period(0.002);
                                     FanPWM.write(duty_cycle);
                                 }
+                                else if (target_value < med_speed_threshold && target_value > low_speed_threshold) {
+                                     init_low_PID = true;
+                                     init_high_PID = true;
+
+                                    if(init_med_PID){
+                                    Init_PID_Controller(pid_medspeed_ptr, medspeed_controller_params);
+                                    init_med_PID = false;
+                                    }
+
+
+                                    duty_cycle = PID_Control(pid_medspeed_ptr, target_value, fanrpm, true);
+                                    //FanPWM.period(0.002);
+                                    FanPWM.write(duty_cycle);
+                                }
                                 else{
                                     init_high_PID = true;
+                                    init_med_PID = true;
                                     if (init_low_PID) {
                                         Init_PID_Controller(pid_lowspeed_ptr, lowspeed_controller_params);
                                         init_low_PID = false;
@@ -342,17 +359,7 @@ void ButtonModeHandler(){
                                     previous_fan_rpm = fanrpm;
                                     previous_target = target_value;
                                 }          
-                                if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                                    printTimer.elapsed_time()) >= 1000ms) {
-                                    //printf("Average RPM: %g\n", fanrpm);
-                                    //printf("Pulse Width: %g\n", pulse_width);
-                                    printf("error %d\n", pid_lowspeed_ptr ->error);
-                                    printf("i error %f\n", i_error);
-                                    printf("d error %d\n", pid_lowspeed_ptr->d_error);
-                                    printf("duty:%0.5f\n", duty_cycle);
-                                    // printf("pulse vector =\n 1:%g\n 2:%g\n 3:%g\n",pulse_width_vector[0], pulse_width_vector[1], pulse_width_vector[2]);
-                                    printTimer.reset();
-                                }    
+                               
 
                         break;
                     case 2:
@@ -385,17 +392,7 @@ void ButtonModeHandler(){
                                 previous_temp = current_temp;
                                 previous_target = target_value;
                             }     
-                         if ( std::chrono::duration_cast<std::chrono::milliseconds>(
-                                    printTimer.elapsed_time()) >= 1000ms) {
-                                    //printf("Average RPM: %g\n", fanrpm);
-                                    //printf("Pulse Width: %g\n", pulse_width);
-                                    printf("error %d\n", pid_lowspeed_ptr ->error);
-                                    printf("i error %f\n", i_error);
-                                    
-                                    printf("duty:%0.5f\n", duty_cycle);
-                                    // printf("pulse vector =\n 1:%g\n 2:%g\n 3:%g\n",pulse_width_vector[0], pulse_width_vector[1], pulse_width_vector[2]);
-                                    printTimer.reset();
-                                }    
+                          
                         break;
 
                     case 3:
@@ -495,7 +492,7 @@ int main() {
     wait_us(2000);          // Clear screen
     lcd.locate(0, 0);     // Move cursor to (0,0)
     lcd.printf("Welcome To Fan  Controller!"); 
-    wait_us(2000000);
+    wait_us(2000);
 
     lcd.cls(); 
     wait_us(2000);          // Clear screen
@@ -503,7 +500,7 @@ int main() {
     lcd.printf("BTN => Mode"); 
     lcd.locate(0, 1);     // Move cursor to (0,0)
     lcd.printf("ROT => Val"); 
-    wait_us(2000000);
+    wait_us(2000);
     
     
     sevseg.InitSegDict();
@@ -541,17 +538,19 @@ int main() {
             wait_us(500000);
             }
         else if (fanrpm > Abnormal_Speed && !settingsModeFlag) {
+            prev_button_mode = 0;
             FanPWM.write(0);
+            duty_cycle = 0;
             OTW_tick.attach(&OTW_Blinky,300ms);
             lcd.cls();
             wait_us(2000);
             lcd.locate(0, 0);  
-            lcd.printf("Abnormal Speed"); 
+            lcd.printf(" Abnormal Speed"); 
             lcd.locate(2,1);
-            lcd.printf("! RPM:%f0.0 !", fanrpm);
-            wait_us(500000);
+            lcd.printf("! RPM:%0.1f !", fanrpm);
+            wait_us(2000000);
             lcd.cls();
-            wait_us(500000);
+    
         }
         else {
             OTW_tick.detach();

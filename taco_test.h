@@ -8,6 +8,8 @@
 #include <vector>
 #include <numeric>
 #include <cmath>
+#include "low_speed_pulse.h"
+#include <cstdio>
 // Declaring header variables
 
 extern Ticker tacho_tick;

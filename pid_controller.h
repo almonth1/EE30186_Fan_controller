@@ -17,6 +17,7 @@ extern float i_error;
 extern Timer pid_timer;
 extern float bias;
 extern int low_speed_threshold;
+extern int med_speed_threshold;
 extern float dt;
 
 // structure "PID" of PID Parameters
@@ -34,10 +35,12 @@ struct PID{
 
 
 extern PID highspeed_controller_params;
+extern PID medspeed_controller_params;
 extern PID lowspeed_controller_params;
 extern PID temp_controller_params;
 
 extern PID* pid_highspeed_ptr;
+extern PID* pid_medspeed_ptr;
 extern PID* pid_lowspeed_ptr;
 extern PID* pid_temp_ptr;
 

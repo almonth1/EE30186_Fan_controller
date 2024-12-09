@@ -1,6 +1,5 @@
 #include "taco_test.h"
-#include "low_speed_pulse.h"
-#include <cstdio>
+
 // measure width of pulse. multiply by 4 and then 60 to get rpm
 //use pwm pulses to increase pulse count
 Ticker tacho_tick;

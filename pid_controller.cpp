@@ -6,16 +6,22 @@ float pid_output = 0;
 float duty_cycle = 0;
 float bias = 0.03;
 float i_error = 0;
-int low_speed_threshold = 400;
+int low_speed_threshold = 300;
+int med_speed_threshold = 700;
 float dt = (pid_period.count()/1000000.0);
-//.Kp = 0.000075
-PID lowspeed_controller_params = {.error = 0, .Kp = 0.0000, .Ki = 0.000015, .Kd = 0.00025, .d_error = 0, .prev_error = 0};
+//.Kp = 0.000075 , .Kd = 0.00025
+PID lowspeed_controller_params = {.error = 0, .Kp = 0.00006855, .Ki = 0.000024, .Kd = 0.00005, .d_error = 0, .prev_error = 0};
 // PID values is good for low speed, not high speed
 PID* pid_lowspeed_ptr = &lowspeed_controller_params;
 
+PID medspeed_controller_params = {.error = 0, .Kp = 0.000324, .Ki = 0.00016, .Kd = 0.000025, .d_error = 0, .prev_error = 0};
+
+// PID values is good for med speed, not high or low speed
+PID* pid_medspeed_ptr = &medspeed_controller_params;
+
 //PID highspeed_controller_params = {.error = 0, .Kp = 0.00007, .Ki = 0.000015, .Kd = 0.000005, .d_error = 0, .prev_error = 0};
 
-PID highspeed_controller_params = {.error = 0, .Kp = 0.001, .Ki = 0.000046, .Kd = 0.00000, .d_error = 0, .prev_error = 0};
+PID highspeed_controller_params = {.error = 0, .Kp = 0.0015, .Ki = 0.0005, .Kd = 0.00000, .d_error = 0, .prev_error = 0};
 
 // PID values is good for low speed, not high speed
 PID* pid_highspeed_ptr = &highspeed_controller_params;
@@ -48,8 +54,7 @@ float PID_Control( PID *pid_params, uint16_t target_value, uint16_t current_valu
             pid_output = pid_params->error*pid_params->Kp + i_error*pid_params->Ki + pid_params->d_error*pid_params->Kd + bias;
         }
         
-        
-        
+    
         if (pid_output > 1) {
             pid_output = 1.0;
         }
